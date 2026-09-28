@@ -7,6 +7,7 @@ hairline solid y-grid, text in ink (never series color), legend for >= 2 series.
 """
 
 import json
+import re
 import sys
 from pathlib import Path
 
@@ -19,7 +20,8 @@ from matplotlib.colors import LinearSegmentedColormap  # noqa: E402
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 from common import (A_SHARES, AXIS, BLUE_RAMP, CACHE, CIGAR, COL1, COL2, DEEMPH, INK, INK2, MARKERS, MUTED,  # noqa: E402
                     R_SHARES, ROOT, ROUND, S1, S2, S3, SHORT, difference, dot, fid_lookup, fidelity_rows,
-                    pilot_metrics, save, split_indices, split_labels, style, summary, confusion, per_class_metrics)
+                    pilot_metrics, save, split_indices, split_labels, style, summary, confusion, per_class_metrics,
+                    ROC_CONDS, auc_summary, mean_roc)
 
 style()
 CMAP = LinearSegmentedColormap.from_list("blue", ["#ffffff"] + BLUE_RAMP)
@@ -406,20 +408,60 @@ def fig13_confusion():
 
 # ------------------------------------------------------------------------------------ 14 classifier learning curves
 def fig14_learning():
-    import glob
-    fig, ax = plt.subplots(figsize=(COL1 + 0.4, 2.4))
+    """Training vs validation loss and accuracy per epoch. The original logs had no validation loss or training
+    accuracy, so they come from the reproduced runs (classifier/reproduce_runs.py -> runs_cls/repro/), each verified
+    bit-identical to its original run (every logged number and every best.pt tensor)."""
+    ver = json.loads((ROOT / "runs_cls" / "repro" / "verification.json").read_text())
+    fig, axes = plt.subplots(2, 3, figsize=(COL2, 4.2), sharex=True, sharey="row")
+    lines = [("val", "-", 1.6), ("train_eval", "--", 1.2), ("train", ":", 1.3)]
     rows = []
-    for cond, col, mk, name in (("A_replace0", S1, "o", "Real only"), ("A_replace0.5", S3, "^", "50% synthetic"),
-                                ("A_replace1", S2, "s", "Synthetic only")):
-        logs = [[json.loads(l) for l in open(p) if l.strip()] for p in sorted(glob.glob(str(ROOT / "runs_cls" / "exp" / f"{cond}_seed*" / "train_log.jsonl")))]
-        acc = 100 * np.mean([[r["val_accuracy"] for r in lg] for lg in logs], 0)
-        ep = np.arange(1, len(acc) + 1)
-        ax.plot(ep, acc, color=col, lw=1.5)
-        dot(ax, [ep[-1]], [acc[-1]], col, mk, label=f"{name} ({len(logs)} seeds)")
-        rows += [[cond, int(e), round(a, 3)] for e, a in zip(ep, acc)]
-    ax.set_xlabel("Epoch"); ax.set_ylabel("Validation accuracy (%)"); ax.legend(loc="lower right")
-    ax.set_title("Classifier training curves (seed mean)", loc="left")
-    save(fig, "fig14_classifier_learning_curves", rows, ["condition", "epoch", "val_acc_mean"])
+    for col_i, ((cond, lab), color) in enumerate(zip(ROC_CONDS, (S1, S3, S2))):
+        runs = sorted(r for r in ver if re.sub(r"_seed\d+$", "", r) == cond)
+        assert runs and all(ver[r]["log_identical"] and ver[r]["weights_identical"] for r in runs), cond
+        logs = [[json.loads(l) for l in open(ROOT / "runs_cls" / "repro" / r / "train_log.jsonl") if l.strip()]
+                for r in runs]
+        ep = np.arange(1, len(logs[0]) + 1)
+
+        def get(key, scale=1.0):
+            return scale * np.array([[e[key] for e in lg] for lg in logs])
+        data = {"val_loss": get("val_loss"), "train_eval_loss": get("train_eval_loss"), "train_loss": get("train_loss"),
+                "val_accuracy": get("val_accuracy", 100), "train_eval_accuracy": get("train_eval_accuracy", 100),
+                "train_accuracy": get("train_accuracy", 100)}
+        selected = np.median([int(np.argmax(a)) + 1 for a in data["val_accuracy"]])  # first best epoch, as in training
+        for row_i, metric in enumerate(("loss", "accuracy")):
+            ax = axes[row_i, col_i]
+            v = data[f"val_{metric}"]
+            ax.fill_between(ep, v.min(0), v.max(0), color=color, alpha=0.16, lw=0, zorder=1)
+            for key, ls, lw in lines:
+                ax.plot(ep, data[f"{key}_{metric}"].mean(0), color=color, ls=ls, lw=lw, zorder=3)
+            ax.axvline(selected, color=AXIS, lw=0.9, ls=(0, (1, 2)), zorder=0)
+        axes[0, col_i].set_title(f"{lab} ({len(runs)} seeds)", loc="left")
+        axes[1, col_i].set_xlabel("Epoch")
+        axes[1, col_i].text(selected - 0.6, 0.03, f"selected epoch\n(median {selected:g})", ha="right", va="bottom",
+                            fontsize=6.4, color=MUTED, transform=axes[1, col_i].get_xaxis_transform())
+        rows += [[cond, int(e)] + [round(float(data[k].mean(0)[i]), 5) for k in data]
+                 + [round(float(data["val_loss"].min(0)[i]), 5), round(float(data["val_loss"].max(0)[i]), 5),
+                    round(float(data["val_accuracy"].min(0)[i]), 4), round(float(data["val_accuracy"].max(0)[i]), 4),
+                    selected] for i, e in enumerate(ep)]
+    axes[0, 0].set_ylabel("Cross-entropy loss")
+    axes[1, 0].set_ylabel("Accuracy (%)")
+    lowest = min(float(r[10]) for r in rows)  # lowest validation accuracy of any seed
+    axes[1, 0].set_ylim(10 * np.floor(lowest / 10), 101)
+    axes[1, 0].set_xticks([1, 10, 20, 30])
+    from matplotlib.lines import Line2D
+    from matplotlib.patches import Patch
+    handles = [Line2D([], [], color=INK2, ls="-", lw=1.6), Line2D([], [], color=INK2, ls="--", lw=1.2),
+               Line2D([], [], color=INK2, ls=":", lw=1.3), Patch(color=INK2, alpha=0.16, lw=0)]
+    labels = ["validation", "training set, no augmentation (eval mode)", "training, during the epoch (augmented)",
+              "validation, range over seeds"]
+    fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.06, 0.955), ncol=4, fontsize=6.8, handlelength=2.6)
+    fig.suptitle("Classifier training vs. validation loss and accuracy per epoch (seed means)", x=0.06, ha="left",
+                 y=1.0, fontsize=8.5, color=INK, fontweight="semibold")
+    fig.subplots_adjust(top=0.84, wspace=0.08, hspace=0.12)
+    save(fig, "fig14_classifier_learning_curves", rows,
+         ["condition", "epoch"] + [f"{k}_mean" for k in ("val_loss", "train_eval_loss", "train_loss", "val_acc",
+                                                          "train_eval_acc", "train_acc")]
+         + ["val_loss_min", "val_loss_max", "val_acc_min", "val_acc_max", "median_selected_epoch"])
 
 
 # ------------------------------------------------------------------------------------ 15 LoRA sweep summary
@@ -443,9 +485,48 @@ def fig15_sweep():
     save(fig, "fig15_lora_sweep", rows, ["run", "label", "kid_4000", "kid_6000", "kid_8000", "kid_10000"])
 
 
+# ------------------------------------------------------------------------------------ 18 ROC curves (validation)
+def fig18_roc():
+    """One-vs-rest ROC curves per class on the VALIDATION set (seed-mean curves, vertical averaging). The one-time
+    test evaluation saved only predicted classes, not scores, so the test set cannot give ROC curves without
+    re-running it, which the protocol forbids."""
+    from matplotlib.lines import Line2D
+    styles = list(zip(ROC_CONDS, (S1, S3, S2), ("o", "^", "s"), ("-", "--", "-.")))
+    fig, axes = plt.subplots(2, 5, figsize=(COL2, 3.9), sharex=True, sharey=True)
+    rows = []
+    for c, ax in enumerate(axes.flat):
+        ax.plot([0, 1], [0, 1], color=AXIS, lw=0.8, ls=":", zorder=1)
+        ax.text(0.57, 0.39, "AUC", fontsize=6.4, color=MUTED, va="bottom")
+        for k, ((cond, _), color, mk, ls) in enumerate(styles):
+            fpr, tpr = mean_roc(cond, c)
+            ax.plot(fpr, tpr, color=color, ls=ls, lw=1.3, zorder=5 - k)
+            y0 = 0.32 - 0.105 * k
+            dot(ax, [0.61], [y0], color, mk, size=4.6, zorder=6)
+            ax.text(0.67, y0, f"{auc_summary(cond, c)['point']:.3f}", fontsize=6.6, color=INK2, va="center")
+            rows += [[SHORT[c], cond, round(float(f), 5), round(float(t), 5)] for f, t in zip(fpr, tpr)]
+        ax.set_title(SHORT[c], loc="left", fontsize=7.4)
+        ax.set_xlim(0, 1)
+        ax.set_ylim(0, 1.02)
+        ax.set_aspect("equal")
+        ax.set_xticks([0, 0.5, 1], ["0", "0.5", "1"])
+        ax.set_yticks([0, 0.5, 1], ["0", "0.5", "1"])
+        ax.grid(axis="both")
+    handles = [Line2D([], [], color=color, ls=ls, lw=1.3, marker=mk, markersize=4.6, markeredgecolor="white")
+               for _, color, mk, ls in styles]
+    labels = [f"{lab} ({auc_summary(cond, 10)['seeds']} seeds): macro AUC {auc_summary(cond, 10)['point']:.3f}"
+              for (cond, lab), *_ in styles]
+    fig.legend(handles, labels, loc="upper left", bbox_to_anchor=(0.05, 0.945), ncol=3, fontsize=7, handlelength=2.6)
+    fig.suptitle("ROC curves per class, one-vs-rest, on the validation set (seed-mean curves)", x=0.05, ha="left",
+                 y=0.995, fontsize=8.5, color=INK, fontweight="semibold")
+    fig.supxlabel("False positive rate", fontsize=8, color=INK2, y=0.02)
+    fig.supylabel("True positive rate", fontsize=8, color=INK2, x=0.02)
+    fig.subplots_adjust(top=0.84, wspace=0.12, hspace=0.28, left=0.07, bottom=0.1)
+    save(fig, "fig18_roc_curves_val", rows, ["class", "condition", "fpr", "tpr_seed_mean"])
+
+
 FIGS = [fig01_dataset, fig02_samples, fig03_diffusion_training, fig04_guidance, fig05_steps, fig06_realism_memorization,
         fig07_fidelity, fig08_replacement, fig09_value_of_synthetic, fig10_augmentation, fig11_focus, fig12_heatmap,
-        fig13_confusion, fig14_learning, fig15_sweep]
+        fig13_confusion, fig14_learning, fig15_sweep, fig18_roc]
 
 if __name__ == "__main__":
     only = sys.argv[1:]

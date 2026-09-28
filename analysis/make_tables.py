@@ -6,15 +6,18 @@ evaluation (see analysis/common.py). CIs are 95% paired bootstrap over evaluatio
 """
 
 import csv
+import glob
 import json
+import re
 import sys
 from pathlib import Path
 
 import numpy as np
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from common import (A_SHARES, CACHE, CIGAR, R_SHARES, ROOT, ROUND, SHORT, TAB, difference, fid_lookup,  # noqa: E402
-                    fidelity_rows, labels_all, per_class_metrics, pilot_metrics, split_indices, summary)
+from common import (A_SHARES, CACHE, CIGAR, R_SHARES, ROC_CONDS, ROOT, ROUND, SHORT, TAB, auc_difference,  # noqa: E402
+                    auc_summary, difference, fid_lookup, fidelity_rows, labels_all, per_class_metrics, pilot_metrics,
+                    split_indices, summary)
 
 
 def pct(s, d=1):
@@ -80,31 +83,114 @@ def t01_dataset():
           "removed after splitting (working pool unchanged).")
 
 
+def training_minutes(cond):
+    """Mean wall-clock minutes of a classifier run (30 epochs incl. per-epoch validation), from its training logs."""
+    ends = [[json.loads(l) for l in open(p) if l.strip()][-1]["elapsed_s"]
+            for p in glob.glob(str(ROOT / "runs_cls" / "exp" / f"{cond}_seed*" / "train_log.jsonl"))]
+    return np.mean(ends) / 60, len(ends)
+
+
+def generation_minutes():
+    """Wall-clock minutes of the final 12,330-image synthetic set, from its generation log (a UTF-16 PowerShell log)."""
+    raw = (ROOT / "data" / "synthetic" / "main_cfg3_steps30" / "generation.log").read_bytes()
+    text = raw.decode("utf-16") if raw[:2] in (b"\xff\xfe", b"\xfe\xff") else raw.decode("utf-8", "replace")
+    return float(re.findall(r"([\d.]+) min elapsed", text)[-1])
+
+
 def t02_hyperparameters():
     c = json.load(open(ROOT / "runs" / "lora_r8" / "train_config.json"))
     k = json.load(open(ROOT / "runs_cls" / "exp" / "A_replace0_seed0" / "config.json"))
+    ms = json.load(open(ROOT / "results" / "model_stats.json"))
+    g, hw = ms["generator"], ms["hardware"]
+    lora_log = [json.loads(l) for l in open(ROOT / "runs" / "lora_r8" / "train_log.jsonl") if l.strip()]
+    lora_min, lora_epochs = lora_log[-1]["elapsed_s"] / 60, lora_log[-1]["epoch"]
+    gen_min = generation_minutes()
+    cls_times = [(lab, training_minutes(cond)[0]) for cond, lab in ROC_CONDS]
     rows = [
         ["Diffusion", "Base model", c["pretrained_model"] + " (Stable Diffusion 1.5)"],
         ["Diffusion", "Fine-tuning", f"LoRA rank {c['lora_rank']}, alpha {c['lora_alpha']:g} on to_q/to_k/to_v/to_out.0"],
         ["Diffusion", "Conditioning", "learned 11 x 77 x 768 class table (10 classes + null), CLIP-initialised"],
         ["Diffusion", "Optimiser", f"AdamW, LR {c['learning_rate']:g}, weight decay {c['adam_weight_decay']:g}, "
                                    f"{c['lr_scheduler']} ({c['lr_warmup_steps']} warmup)"],
-        ["Diffusion", "Training", f"{c['max_train_steps']:,} steps, batch {c['train_batch_size']}, {c['resolution']}px, "
-                                  f"{c['mixed_precision']}, cond. dropout {c['cond_dropout']}, flips + 90-deg rotations, seed {c['seed']}"],
+        ["Diffusion", "Training", f"{c['max_train_steps']:,} steps (= {lora_epochs:.1f} epochs of the 12,330 training "
+                                  f"images), batch {c['train_batch_size']}, {c['resolution']}px, {c['mixed_precision']}, "
+                                  f"cond. dropout {c['cond_dropout']}, flips + 90-deg rotations, seed {c['seed']}"],
+        ["Diffusion", "Parameters", f"U-Net {g['unet_parameters_frozen']:,} (frozen) + LoRA {g['lora_parameters_trainable']:,} "
+                                    f"on {g['lora_adapted_layers']} attention projections (trained) + class table "
+                                    f"{g['class_table_parameters_trainable']:,} (trained); VAE {g['vae_parameters_frozen']:,} "
+                                    f"(frozen); CLIP text encoder {g['clip_text_encoder_parameters']:,} (used once, to "
+                                    "initialise the class table)"],
+        ["Diffusion", "Training time", f"{lora_min:.0f} min for {c['max_train_steps']:,} steps "
+                                       f"({60 * lora_min / c['max_train_steps']:.2f} s/step)"],
         ["Diffusion", "Selected checkpoint", "10,000 steps (chosen on validation KID + class fidelity)"],
         ["Sampling", "Sampler", "DPM-Solver++ (2nd order), 30 steps, classifier-free guidance 3.0"],
         ["Sampling", "Output", "512 px generated, Lanczos-downsampled to native 256 px"],
+        ["Sampling", "Generation time", f"{gen_min:.1f} min for the 12,330-image synthetic set "
+                                        f"({60 * gen_min / 12330:.2f} s/image, batches of 20)"],
         ["Classifier", "Model", "ResNet-18, ImageNet-pretrained, 256 px input"],
+        ["Classifier", "Parameters", f"{ms['resnet18']['parameters']:,} (all trained; ImageNet ResNet-18 with a new "
+                                     "10-class output layer)"],
         ["Classifier", "Optimiser", f"AdamW, LR {k['learning_rate']:g} (tuned on validation from 1e-4 / 3e-4 / 1e-3), "
                                     f"weight decay {k['weight_decay']:g}, 1 warmup epoch + cosine"],
         ["Classifier", "Training", f"{k['epochs']} epochs, batch {k['batch_size']}, bf16, flips + 90-deg rotations, "
                                    "best epoch by validation accuracy"],
         ["Classifier", "Seeds", "3 per condition (8 for real-only, Cigar-Shaped and scarcity-control conditions)"],
+        ["Classifier", "Training time", "; ".join(f"{lab} {m:.1f} min" for lab, m in cls_times)
+         + " per run (30 epochs incl. per-epoch validation; mean over seeds)"],
         ["Evaluation", "Realism", "per-class FID / KID (Inception-v3 pool features) vs validation"],
         ["Evaluation", "Classification", "accuracy, macro-F1, per-class P/R/F1 on the held-out test set (used once); "
                                          "95% paired bootstrap CIs, 2,000 resamples"],
+        ["Hardware", "All training and inference", f"1x {hw['gpu']} ({hw['gpu_memory_gib']:.0f} GB); {hw['cpu']}; "
+                                                   f"{hw['ram_gib']:.0f} GB RAM; Windows 11; PyTorch {hw['torch']}, "
+                                                   f"CUDA {hw['cuda']}"],
     ]
     write("t02_hyperparameters", "Model and training settings", ["Stage", "Setting", "Value"], rows)
+
+
+def t13_inference_speed():
+    """Measured speed (results/inference_speed.json, analysis/benchmark_inference.py) + FLOPs (results/model_stats.json)."""
+    sp = json.load(open(ROOT / "results" / "inference_speed.json"))
+    ms = json.load(open(ROOT / "results" / "model_stats.json"))
+    gen, cls, g, r = sp["generator"], sp["classifier"], ms["generator"], ms["resnet18"]
+    g1, g20, cf, ce = gen["batch1"], gen["batch20_per_image"], cls["forward_only_batch1"], cls["end_to_end_batch1"]
+    gfl = lambda f: f"{f / 1e9:,.1f}"  # noqa: E731
+    rows = [
+        ["Diffusion generator", "batch 1 (latency), per image", f"{g1['mean_ms']:.1f}", f"{g1['median_ms']:.1f}",
+         f"{g1['p95_ms']:.1f}", f"{1000 / g1['mean_ms']:.2f}", g1["n"], gfl(g["flops_per_generated_image"])],
+        ["Diffusion generator", "batch 20 (as used), per image", f"{g20['mean_ms']:.1f}", f"{g20['median_ms']:.1f}",
+         f"{g20['p95_ms']:.1f}", f"{1000 / g20['mean_ms']:.2f}", g20["n"] * 20, gfl(g["flops_per_generated_image"])],
+        ["- U-Net + LoRA", "one denoising step (guidance: 2 evaluations)", "-", "-", "-", "-", "-",
+         gfl(g["unet_flops_per_guided_step"])],
+        ["- VAE decoder", "one 512 px image", "-", "-", "-", "-", "-", gfl(g["vae_decode_flops"])],
+        ["ResNet-18 classifier", "batch 1, GPU forward only", f"{cf['mean_ms']:.2f}", f"{cf['median_ms']:.2f}",
+         f"{cf['p95_ms']:.2f}", f"{1000 / cf['mean_ms']:.0f}", cf["n"], gfl(r["flops_per_image"])],
+        ["ResNet-18 classifier", "batch 1, end-to-end", f"{ce['mean_ms']:.2f}", f"{ce['median_ms']:.2f}",
+         f"{ce['p95_ms']:.2f}", f"{1000 / ce['mean_ms']:.0f}", ce["n"], gfl(r["flops_per_image"])],
+    ]
+    write("t13_inference_speed", f"Inference speed and compute on one {sp['environment']['gpu']} (per image)",
+          ["Model", "Mode", "Mean ms", "Median ms", "p95 ms", "Images/s", "Timed images", "GFLOPs"], rows,
+          f"Generator: checkpoint-10000, guidance 3, {g['steps']} DPM-Solver++ steps, fp16, 512 px incl. VAE decode "
+          f"(+ {gen['resize_512_to_256_ms']['mean_ms']:.1f} ms CPU resize to 256 px, not included); one image = "
+          f"{g['steps']} guided U-Net steps + one VAE decode; one U-Net evaluation = "
+          f"{g['unet_flops_per_evaluation'] / 1e9:,.1f} GFLOPs. Classifier: ResNet-18 at 256 px, bf16; end-to-end = "
+          "image upload + normalisation + forward + softmax download. Warm-up excluded; GPU synchronised around every "
+          "timed call. FLOPs: PyTorch FlopCounterMode, 2 FLOPs per multiply-accumulate, matrix multiplications, "
+          "convolutions and attention (analysis/model_stats.py); '-' = not timed separately.")
+
+
+def t14_roc_auc():
+    """One-vs-rest ROC AUC on the VALIDATION set (the test evaluation saved no scores; the test set was not re-run)."""
+    rows = []
+    for j in range(11):
+        s = {cond: auc_summary(cond, j) for cond, _ in ROC_CONDS}
+        rows.append([SHORT[j] if j < 10 else "Macro AUC"] + [f3(s[cond]) for cond, _ in ROC_CONDS]
+                    + [d3(auc_difference("A_replace1", "A_replace0", j)), d3(auc_difference("A_replace0.5", "A_replace0", j))])
+    seeds = " / ".join(str(auc_summary(cond, 10)["seeds"]) for cond, _ in ROC_CONDS)
+    write("t14_roc_auc_val", "One-vs-rest ROC AUC per class on the validation set",
+          ["Class"] + [f"{lab} AUC [95% CI]" for _, lab in ROC_CONDS] + ["Synthetic only - real only", "50% - real only"],
+          rows, f"Validation set (2,607 images); seed means ({seeds} seeds); 95% paired bootstrap CIs over validation "
+                "images (2,000 resamples). Macro AUC = mean of the 10 one-vs-rest AUCs. Computed on validation because "
+                "the one-time test evaluation saved only predicted classes, not scores; the test set was not re-run.")
 
 
 def t03_generator_selection():
@@ -274,6 +360,9 @@ def t12_robustness():
 
 
 if __name__ == "__main__":
+    only = sys.argv[1:]
     for fn in (t01_dataset, t02_hyperparameters, t03_generator_selection, t04_lora_sweep, t05_pilots, t06_replacement,
-               t07_paired_real, t08_augmentation, t09_focus, t10_per_class, t11_final_set, t12_robustness):
-        fn()
+               t07_paired_real, t08_augmentation, t09_focus, t10_per_class, t11_final_set, t12_robustness,
+               t13_inference_speed, t14_roc_auc):
+        if not only or any(o in fn.__name__ for o in only):
+            fn()

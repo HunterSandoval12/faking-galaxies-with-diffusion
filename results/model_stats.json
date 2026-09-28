@@ -1,0 +1,37 @@
+{
+  "resnet18": {
+    "parameters": 11181642,
+    "trainable": 11181642,
+    "flops_per_image": 4737476608,
+    "input": "3 x 256 x 256"
+  },
+  "generator": {
+    "unet_parameters_frozen": 859520964,
+    "lora_parameters_trainable": 1594368,
+    "class_table_parameters_trainable": 650496,
+    "lora_rank": 8,
+    "lora_adapted_layers": 128,
+    "vae_parameters_frozen": 83653863,
+    "vae_encoder_parameters": 34163664,
+    "vae_decoder_parameters": 49490199,
+    "clip_text_encoder_parameters": 123060480,
+    "unet_flops_per_evaluation": 805552207872,
+    "unet_flops_per_guided_step": 1611104415744,
+    "vae_decode_flops": 2514518933504,
+    "steps": 30,
+    "flops_per_generated_image": 50847651405824,
+    "latent": "4 x 64 x 64",
+    "class_embedding": "77 x 768"
+  },
+  "counting": "torch.utils.flop_counter.FlopCounterMode; 2 FLOPs per multiply-accumulate; matmul/conv/attention only",
+  "hardware": {
+    "os": "Windows-11-10.0.26200-SP0",
+    "python": "3.14.7",
+    "torch": "2.14.0+cu130",
+    "cpu": "AMD Ryzen 7 9800X3D 8-Core Processor",
+    "ram_gib": 31.1,
+    "gpu_memory_gib": 31.8,
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "cuda": "13.0"
+  }
+}

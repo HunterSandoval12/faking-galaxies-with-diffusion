@@ -6,6 +6,10 @@
 2. Class fidelity of the FINAL main synthetic set (12,330 images) with the two real-only
    classifiers (runs_cls/real_lr1e-3_seed0/1), + those classifiers' real validation recall.
 3. Sample-grid picks: 4 synthetic (sample_index 0-3) and 4 random working-pool images per class.
+4. Validation-set class probabilities of the real-only, 50%-mix and synthetic-only classifiers (all
+   seeds), for ROC curves and AUC. The one-time test evaluation saved only predicted classes, not
+   scores, so ROC/AUC use the validation set; the test set is not read. Each classifier's argmax must
+   equal its saved validation predictions. Run this step alone with: compute_extras.py val_probs
 """
 
 import glob
@@ -20,7 +24,7 @@ import torch
 sys.path.insert(0, str(Path(__file__).resolve().parent))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "diffusion"))
 sys.path.insert(0, str(Path(__file__).resolve().parent.parent / "classifier"))
-from common import CACHE, CLASS_NAMES, H5, ROOT, split_indices  # noqa: E402
+from common import CACHE, CLASS_NAMES, EXP, H5, ROOT, split_indices  # noqa: E402
 from eval_fid import InceptionFeatures  # noqa: E402
 from train_classifier import build_model, predict, read_images_cached  # noqa: E402
 
@@ -76,5 +80,26 @@ def main():
     print("3. sample-grid picks cached", flush=True)
 
 
+def val_probabilities():
+    dev = torch.device("cuda")
+    with h5py.File(H5, "r") as f:
+        val_x = read_images_cached(f["images"], split_indices()["val"])  # validation images only
+    out = {}
+    for cond in ("A_replace0", "A_replace0.5", "A_replace1"):
+        for d in sorted(EXP.glob(f"{cond}_seed*")):
+            ck = torch.load(d / "best.pt", map_location="cpu", weights_only=False)
+            model = build_model().to(dev).to(memory_format=torch.channels_last)
+            model.load_state_dict(ck["state_dict"])
+            p = predict(model, val_x, dev).numpy().astype(np.float32)
+            assert np.array_equal(p.argmax(1), np.load(d / "val_predictions.npy")),                 f"{d.name}: probabilities do not reproduce the saved validation predictions"
+            out[d.name] = p
+    np.savez_compressed(CACHE / "val_probs.npz", **out)
+    print(f"4. validation probabilities cached for {len(out)} classifiers (argmax = saved predictions)", flush=True)
+
+
 if __name__ == "__main__":
-    main()
+    if sys.argv[1:] == ["val_probs"]:
+        val_probabilities()
+    else:
+        main()
+        val_probabilities()

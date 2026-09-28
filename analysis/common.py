@@ -137,6 +137,71 @@ def confusion(split, cond, normalize=True):
     return cm / cm.sum(1, keepdims=True) if normalize else cm
 
 
+# ---------------------------------------------------------------- ROC / AUC (validation only)
+# The one-time test evaluation saved predicted classes only (no scores), so ROC curves and AUC are
+# computed on the VALIDATION set from the class probabilities cached by compute_extras.py (step 4).
+ROC_CONDS = [("A_replace0", "Real only"), ("A_replace0.5", "50% synthetic"), ("A_replace1", "Synthetic only")]
+
+
+@lru_cache(maxsize=None)
+def val_probs():
+    z = np.load(CACHE / "val_probs.npz")
+    return {k: z[k] for k in z.files}
+
+
+def auc_ovr(probs, y):
+    """One-vs-rest AUC of every class from [n, 10] scores: the Mann-Whitney statistic with average ranks for
+    ties, which equals sklearn.metrics.roc_auc_score for each class."""
+    from scipy.stats import rankdata
+    ranks = rankdata(probs, axis=0)
+    pos = y[:, None] == np.arange(probs.shape[1])
+    n1 = pos.sum(0)
+    n0 = len(y) - n1
+    return (np.where(pos, ranks, 0).sum(0) - n1 * (n1 + 1) / 2) / (n1 * n0)
+
+
+@lru_cache(maxsize=None)
+def auc_stat(cond):
+    """(point [11], bootstrap [N_BOOT, 11]) of the seed-mean validation AUC; columns = 10 classes + macro AUC.
+    Same paired bootstrap as every other statistic (boot_matrix: identical resamples for every model)."""
+    y, p, runs = split_labels("val"), val_probs(), conditions()[cond]
+
+    def one(idx):
+        a = np.mean([auc_ovr(p[r][idx], y[idx]) for r in runs], 0)
+        return np.append(a, a.mean())
+    return one(np.arange(len(y))), np.array([one(b) for b in boot_matrix("val")])
+
+
+def auc_summary(cond, j):
+    """dict(point, lo, hi, seeds, sd) of column j of auc_stat (j = class, or 10 = macro AUC)."""
+    p, b = auc_stat(cond)
+    lo, hi = np.percentile(b[:, j], [2.5, 97.5])
+    y = split_labels("val")
+    per_seed = [np.append(a := auc_ovr(val_probs()[r], y), a.mean())[j] for r in conditions()[cond]]
+    return {"point": float(p[j]), "lo": float(lo), "hi": float(hi), "seeds": len(per_seed),
+            "sd": float(np.std(per_seed, ddof=1)) if len(per_seed) > 1 else 0.0}
+
+
+def auc_difference(a, b, j):
+    pa, ba = auc_stat(a)
+    pb, bb = auc_stat(b)
+    lo, hi = np.percentile(ba[:, j] - bb[:, j], [2.5, 97.5])
+    return {"point": float(pa[j] - pb[j]), "lo": float(lo), "hi": float(hi)}
+
+
+def mean_roc(cond, cls):
+    """Seed-mean one-vs-rest ROC curve of a class (vertical averaging of TPR on a fixed FPR grid)."""
+    from sklearn.metrics import roc_curve
+    grid = np.unique(np.concatenate([np.linspace(0, 0.1, 201), np.linspace(0.1, 1, 181)]))
+    y, tprs = split_labels("val"), []
+    for r in conditions()[cond]:
+        fpr, tpr, _ = roc_curve(y == cls, val_probs()[r][:, cls])
+        t = np.interp(grid, fpr, tpr)
+        t[0] = 0.0
+        tprs.append(t)
+    return grid, np.mean(tprs, 0)
+
+
 # ---------------------------------------------------------------- diffusion / FID results
 def fid_rows(run):
     p = ROOT / "runs" / run / "fid" / "results.jsonl"

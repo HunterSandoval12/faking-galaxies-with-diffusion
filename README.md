@@ -25,8 +25,12 @@ fixed, held-out set of real images.
 | When does synthetic help? | When real data is scarce: +2.2 points [+1.2, +3.1] with only 10% of the real data |
 | Rare vs common class? | No measurable effect for either class at the single-class level |
 
+ROC AUC (validation set, one-vs-rest, macro over classes): real-only 0.983, 50% synthetic 0.978, synthetic-only
+0.927 (the one-time test evaluation saved predicted classes only, so AUC is reported on validation; Fig. 18, Tab. 14).
+
 Inference speed on one RTX 5090: the generator takes 0.92 s per image at batch size 1 (0.48 s per image at
-batch 20); the ResNet-18 classifier takes 1.7 ms per image at batch size 1, end-to-end.
+batch 20; 50.8 TFLOPs per image); the ResNet-18 classifier takes 1.7 ms per image at batch size 1, end-to-end
+(4.7 GFLOPs).
 
 Figures, tables and their captions: [`results/README.md`](results/README.md). Real vs. synthetic galaxies for every
 class: [`results/figures/fig02_real_vs_synthetic_samples.png`](results/figures/fig02_real_vs_synthetic_samples.png).
@@ -89,9 +93,9 @@ files equal the fp32 weights cast to fp16.
 |---|---|
 | `data/prepare_splits.py` | Stratified 70/15/15 split; removes exact duplicates and overlapping cutouts; `data/splits/` holds the split indices |
 | `diffusion/` | LoRA fine-tuning (`train_lora.py`), sampling (`sample.py`), FID/KID evaluation (`eval_fid.py`), tuning drivers, final generation (`generate_synthetic.py`) and checks (`check_synthetic.py`) |
-| `classifier/` | ResNet-18 training with real/synthetic mixing (`train_classifier.py`), class fidelity, experiment driver (`run_experiments.py`), the one-time test evaluation (`evaluate_test.py`) |
+| `classifier/` | ResNet-18 training with real/synthetic mixing (`train_classifier.py`), class fidelity, experiment driver (`run_experiments.py`), the one-time test evaluation (`evaluate_test.py`), re-runs with extra logging (`reproduce_runs.py`) |
 | `analysis/` | Figures, tables and statistics for the paper |
-| `results/` | 17 figures (PNG + PDF + CSV data) and 13 tables (CSV + Markdown + LaTeX) |
+| `results/` | 18 figures (PNG + PDF + CSV data) and 14 tables (CSV + Markdown + LaTeX) |
 | `notebooks/` | Google Colab tutorials (built by the scripts in `notebooks/_build/`) |
 | `tools/` | `make_release_assets.py`: builds the release files and their checksums |
 | `licenses/` | License of the LoRA weights (CreativeML Open RAIL-M) |
@@ -125,8 +129,9 @@ Run from the project root, in order (times on an RTX 5090):
    integrity / realism / memorization checks).
 6. **Experiments:** `python classifier/run_experiments.py` (all classifiers, validation only), ending in the
    one-time test evaluation `classifier/evaluate_test.py --split test --confirm-test-set`.
-7. **Figures and tables:** `python analysis/compute_extras.py`, `python analysis/make_figures.py`,
-   `python analysis/make_tables.py`.
+7. **Figures and tables:** `python analysis/compute_extras.py`, `python classifier/reproduce_runs.py`
+   (learning curves; validation only), `python analysis/model_stats.py` (parameters, FLOPs),
+   `python analysis/make_figures.py`, `python analysis/make_tables.py`.
 
 ## Methodological safeguards
 

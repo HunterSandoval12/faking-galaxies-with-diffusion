@@ -24,8 +24,10 @@ Which real/synthetic images are drawn depends on --seed, so seed replicates incl
 sampling variability.
 
 Outputs in --output-dir: best.pt (weights + config + validation metrics of the best
-epoch), train_log.jsonl (one line per epoch), metrics.json (best epoch, per-class
-metrics, confusion matrix), config.json.
+epoch), train_log.jsonl (one line per epoch: training loss and accuracy as measured during
+the epoch, with augmentation; validation loss, accuracy and macro-F1; with --log-train-eval
+also the loss and accuracy of the whole training set without augmentation, in eval mode),
+metrics.json (best epoch, per-class metrics, confusion matrix), config.json.
 """
 
 import argparse
@@ -81,6 +83,9 @@ def parse_args():
     p.add_argument("--drop-synthetic", action="store_true",
                    help="make exactly the same draws as the mix, then leave the synthetic images out "
                         "(the mix's real part alone - a paired control)")
+    p.add_argument("--log-train-eval", action="store_true",
+                   help="also evaluate the training set without augmentation after every epoch and log its "
+                        "loss/accuracy (extra logging only: training itself is unchanged)")
     args = p.parse_args()
     modes = [args.replace_fraction is not None, args.add_fraction is not None, args.focus_class is not None,
              args.train_npz is not None, args.per_class is not None]
@@ -242,6 +247,7 @@ def evaluate(model, images, labels, device):
     p, r, f1, n = precision_recall_fscore_support(y, pred, labels=range(len(CLASS_NAMES)), zero_division=0)
     return {
         "accuracy": float((pred == y).mean()),
+        "loss": float(F.nll_loss(torch.log(probs.clamp_min(1e-12)), labels).item()),  # cross-entropy
         "macro_f1": float(f1.mean()),
         "per_class": {str(c): {"precision": float(p[c]), "recall": float(r[c]), "f1": float(f1[c]), "n": int(n[c])}
                       for c in range(len(CLASS_NAMES))},
@@ -315,7 +321,7 @@ def main():
         for epoch in range(1, args.epochs + 1):
             model.train()
             perm = torch.randperm(len(train_x))
-            total_loss, n_seen = 0.0, 0
+            total_loss, n_seen, n_correct = 0.0, 0, 0
             for s in range(0, len(perm), args.batch_size):
                 bi = perm[s:s + args.batch_size]
                 x = to_input(train_x[bi].to(device, non_blocking=True), augment=not args.no_augment)
@@ -330,9 +336,14 @@ def main():
                 step += 1
                 total_loss += loss.item() * len(bi)
                 n_seen += len(bi)
+                n_correct += int((logits.argmax(1) == y).sum())
             m = evaluate(model, val_x, val_y, device)
             rec = {"epoch": epoch, "train_loss": total_loss / n_seen, "val_accuracy": m["accuracy"],
-                   "val_macro_f1": m["macro_f1"], "lr": scheduler.get_last_lr()[0], "elapsed_s": round(time.time() - t0, 1)}
+                   "val_macro_f1": m["macro_f1"], "lr": scheduler.get_last_lr()[0], "elapsed_s": round(time.time() - t0, 1),
+                   "train_accuracy": n_correct / n_seen, "val_loss": m["loss"]}
+            if args.log_train_eval:  # the whole training set, no augmentation, eval mode
+                mt = evaluate(model, train_x, train_y, device)
+                rec.update(train_eval_loss=mt["loss"], train_eval_accuracy=mt["accuracy"])
             log.write(json.dumps(rec) + "\n")
             log.flush()
             improved = best is None or m["accuracy"] > best["accuracy"]

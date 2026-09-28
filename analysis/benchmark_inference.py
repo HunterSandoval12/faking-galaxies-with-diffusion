@@ -132,25 +132,8 @@ def main():
     (OUT / "inference_speed.json").write_text(json.dumps(res, indent=2))
 
     sys.path.insert(0, str(HERE))
-    from make_tables import write
-    g1, g20, cf, ce = gen["batch1"], gen["batch20_per_image"], cls["forward_only_batch1"], cls["end_to_end_batch1"]
-    fmt = lambda s: f"{s['mean_ms']:.1f}"  # noqa: E731
-    rows = [
-        ["Diffusion generator", "batch 1 (latency)", fmt(g1), f"{g1['median_ms']:.1f}", f"{g1['p95_ms']:.1f}",
-         f"{1000 / g1['mean_ms']:.2f}", g1["n"]],
-        ["Diffusion generator", "batch 20 (as used), per image", fmt(g20), f"{g20['median_ms']:.1f}", f"{g20['p95_ms']:.1f}",
-         f"{1000 / g20['mean_ms']:.2f}", g20["n"] * 20],
-        ["ResNet-18 classifier", "batch 1, GPU forward only", f"{cf['mean_ms']:.2f}", f"{cf['median_ms']:.2f}",
-         f"{cf['p95_ms']:.2f}", f"{1000 / cf['mean_ms']:.0f}", cf["n"]],
-        ["ResNet-18 classifier", "batch 1, end-to-end", f"{ce['mean_ms']:.2f}", f"{ce['median_ms']:.2f}",
-         f"{ce['p95_ms']:.2f}", f"{1000 / ce['mean_ms']:.0f}", ce["n"]],
-    ]
-    write("t13_inference_speed", f"Inference speed on one {env['gpu']} (ms per image)",
-          ["Model", "Mode", "Mean ms", "Median ms", "p95 ms", "Images/s", "Timed images"], rows,
-          "Generator: checkpoint-10000, guidance 3, 30 DPM-Solver++ steps, fp16, 512 px incl. VAE decode "
-          f"(+ {gen['resize_512_to_256_ms']['mean_ms']:.1f} ms CPU resize to 256 px, not included). "
-          "Classifier: ResNet-18 at 256 px, bf16; end-to-end = image upload + normalisation + forward + softmax "
-          "download. Warm-up excluded; GPU synchronised around every timed call.")
+    from make_tables import t13_inference_speed  # the table: speed + FLOPs (results/model_stats.json)
+    t13_inference_speed()
 
 
 if __name__ == "__main__":

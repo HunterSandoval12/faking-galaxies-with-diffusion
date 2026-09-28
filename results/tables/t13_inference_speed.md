@@ -1,10 +1,12 @@
-### Inference speed on one NVIDIA GeForce RTX 5090 (ms per image)
+### Inference speed and compute on one NVIDIA GeForce RTX 5090 (per image)
 
-| Model | Mode | Mean ms | Median ms | p95 ms | Images/s | Timed images |
-|---|---|---|---|---|---|---|
-| Diffusion generator | batch 1 (latency) | 920.2 | 899.0 | 1013.2 | 1.09 | 20 |
-| Diffusion generator | batch 20 (as used), per image | 479.2 | 479.2 | 480.5 | 2.09 | 100 |
-| ResNet-18 classifier | batch 1, GPU forward only | 1.60 | 1.56 | 1.91 | 624 | 1000 |
-| ResNet-18 classifier | batch 1, end-to-end | 1.74 | 1.68 | 2.09 | 575 | 1000 |
+| Model | Mode | Mean ms | Median ms | p95 ms | Images/s | Timed images | GFLOPs |
+|---|---|---|---|---|---|---|---|
+| Diffusion generator | batch 1 (latency), per image | 920.2 | 899.0 | 1013.2 | 1.09 | 20 | 50,847.7 |
+| Diffusion generator | batch 20 (as used), per image | 479.2 | 479.2 | 480.5 | 2.09 | 100 | 50,847.7 |
+| - U-Net + LoRA | one denoising step (guidance: 2 evaluations) | - | - | - | - | - | 1,611.1 |
+| - VAE decoder | one 512 px image | - | - | - | - | - | 2,514.5 |
+| ResNet-18 classifier | batch 1, GPU forward only | 1.60 | 1.56 | 1.91 | 624 | 1000 | 4.7 |
+| ResNet-18 classifier | batch 1, end-to-end | 1.74 | 1.68 | 2.09 | 575 | 1000 | 4.7 |
 
-Generator: checkpoint-10000, guidance 3, 30 DPM-Solver++ steps, fp16, 512 px incl. VAE decode (+ 2.1 ms CPU resize to 256 px, not included). Classifier: ResNet-18 at 256 px, bf16; end-to-end = image upload + normalisation + forward + softmax download. Warm-up excluded; GPU synchronised around every timed call.
+Generator: checkpoint-10000, guidance 3, 30 DPM-Solver++ steps, fp16, 512 px incl. VAE decode (+ 2.1 ms CPU resize to 256 px, not included); one image = 30 guided U-Net steps + one VAE decode; one U-Net evaluation = 805.6 GFLOPs. Classifier: ResNet-18 at 256 px, bf16; end-to-end = image upload + normalisation + forward + softmax download. Warm-up excluded; GPU synchronised around every timed call. FLOPs: PyTorch FlopCounterMode, 2 FLOPs per multiply-accumulate, matrix multiplications, convolutions and attention (analysis/model_stats.py); '-' = not timed separately.

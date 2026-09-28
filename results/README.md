@@ -5,6 +5,8 @@ Regenerate everything with:
 
 ```
 .\.venv\Scripts\python.exe analysis\compute_extras.py   # GPU pre-computations (cached in results\cache\)
+.\.venv\Scripts\python.exe classifier\reproduce_runs.py  # re-runs 14 classifiers with extra logging (fig. 14)
+.\.venv\Scripts\python.exe analysis\model_stats.py      # parameter counts + FLOPs (CPU) -> results\model_stats.json
 .\.venv\Scripts\python.exe analysis\make_figures.py
 .\.venv\Scripts\python.exe analysis\make_tables.py
 ```
@@ -28,6 +30,7 @@ Regenerate everything with:
 | When does synthetic help? | When real data is scarce: +2.2 pts [1.2, 3.1] at 10% real | Fig. 9, Tab. 7 |
 | Rare vs common class: different optimal ratio? | No measurable effect for either at the class level | Fig. 11, Tab. 9 |
 | Why so limited? | Class fidelity: e.g. Cigar-Shaped synthetic images recognised only 28% of the time | Fig. 7, Figs. 12-13, Tab. 11 |
+| How well do the classifiers rank each class (ROC AUC)? | Validation only: macro AUC 0.983 real-only, 0.978 50% mix, 0.927 synthetic-only (the test evaluation saved no scores) | Fig. 18, Tab. 14 |
 
 ## Figures
 
@@ -46,17 +49,18 @@ Regenerate everything with:
 | 11 | `fig11_focus_classes` | **Secondary result**: class F1 vs synthetic ratio for Round Smooth, Cigar-Shaped Smooth and the scarcity control - no consistent effect. |
 | 12 | `fig12_per_class_f1_heatmap` | Per-class test F1 across the replacement curve - which classes degrade most (Disturbed, Cigar-Shaped). |
 | 13 | `fig13_confusion_matrices` | Real-only vs synthetic-only confusion matrices - e.g. synthetic-only confuses Cigar-Shaped with In-between Round (34%) and the two edge-on classes (36%). |
-| 14 | `fig14_classifier_learning_curves` | Validation accuracy per epoch for real-only, 50% and synthetic-only training. |
+| 14 | `fig14_classifier_learning_curves` | Training vs validation loss and accuracy per epoch for real-only, 50% and synthetic-only (seed means; band = seed range; selected epoch marked). Training accuracy, validation loss and the un-augmented training-set curves come from re-runs with extra logging (`classifier\reproduce_runs.py`), each verified bit-identical to the original run (every logged number and every weight). Validation only. |
 | 15 | `fig15_lora_sweep` | Rank / learning-rate / schedule sweep: settings differ less than training seeds do. |
 | 16 | `fig16_class_examples` | 3 real example galaxies per class from the training split (seeded random draw), labeled by class - an introductory dataset figure. Made by `analysis\make_class_examples.py` (`--per-class 2` for a smaller version). |
 | 17 | `fig17_prediction_examples` | 10 held-out test galaxies (seeded random draw: 2 Cigar-Shaped + 1 from each of 8 other classes, fixed before viewing predictions) with the true class and the real-only / synthetic-only / 50%-mix predictions (majority over seeds, agreement shown), from the saved one-time test predictions. Made by `analysis\make_prediction_examples.py`. |
+| 18 | `fig18_roc_curves_val` | One-vs-rest ROC curves per class for real-only, 50% and synthetic-only (seed-mean curves) with per-class AUC, on the **validation** set: the one-time test evaluation saved only predicted classes, not scores, and the test set is not re-run. Probabilities from `analysis\compute_extras.py val_probs` (argmax verified equal to the saved validation predictions). |
 
 ## Tables
 
 | # | File | Content |
 |---|---|---|
 | 1 | `t01_dataset` | Dataset composition: original counts, exact duplicates and overlapping cutouts removed, final splits. |
-| 2 | `t02_hyperparameters` | All model, training, sampling and evaluation settings (methods section). |
+| 2 | `t02_hyperparameters` | All model, training, sampling and evaluation settings (methods section): optimiser, LR schedule, epochs, batch size, parameter counts (frozen U-Net vs trainable LoRA + class table, VAE, ResNet-18), training / generation time per model, hardware. |
 | 3 | `t03_generator_selection` | The three generator candidates x guidance: KID, FID, class fidelity. |
 | 4 | `t04_lora_sweep` | KID by checkpoint for all 7 LoRA runs (incl. the 2,000-5,000 scan). |
 | 5 | `t05_sampling_pilots` | Guidance and steps pilots: KID, fidelity, synthetic-only usefulness, real control. |
@@ -67,4 +71,5 @@ Regenerate everything with:
 | 10 | `t10_per_class_test` | Per-class precision / recall / F1: real-only, 50%, synthetic-only. |
 | 11 | `t11_final_synthetic_set` | Final synthetic set per class: realism, class fidelity, memorization. |
 | 12 | `t12_robustness_epochs` | Robustness check (validation only): 50 vs 30 classifier epochs - the gap changes by ~1 point. |
-| 13 | `t13_inference_speed` | Inference speed on the RTX 5090: generator 920 ms/image (batch 1) or 479 ms/image (batch 20); classifier 1.6 ms (GPU forward) / 1.7 ms (end-to-end) per image at batch 1. Raw timings: `results\inference_speed.json`; made by `analysis\benchmark_inference.py`. |
+| 13 | `t13_inference_speed` | Inference speed and compute on the RTX 5090: generator 920 ms/image (batch 1) or 479 ms/image (batch 20), 50.8 TFLOPs per image (1.61 TFLOPs per guided U-Net step, 2.51 TFLOPs VAE decode); classifier 1.6 ms (GPU forward) / 1.7 ms (end-to-end) per image at batch 1, 4.74 GFLOPs. Timings: `results\inference_speed.json` (`analysis\benchmark_inference.py`); FLOPs and parameters: `results\model_stats.json` (`analysis\model_stats.py`). |
+| 14 | `t14_roc_auc_val` | One-vs-rest ROC AUC per class and macro AUC (validation set) for real-only, 50% and synthetic-only, with 95% paired bootstrap CIs and paired differences. |
