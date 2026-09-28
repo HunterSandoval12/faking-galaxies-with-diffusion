@@ -1,0 +1,31 @@
+class,name,example,dataset_index
+0,Disturbed,1,517
+0,Disturbed,2,649
+0,Disturbed,3,907
+1,Merging,1,1116
+1,Merging,2,1160
+1,Merging,3,1219
+2,Round Smooth,1,4228
+2,Round Smooth,2,4623
+2,Round Smooth,3,5344
+3,In-between Round,1,6675
+3,In-between Round,2,6865
+3,In-between Round,3,7066
+4,Cigar-Shaped Smooth,1,7694
+4,Cigar-Shaped Smooth,2,7835
+4,Cigar-Shaped Smooth,3,7878
+5,Barred Spiral,1,8016
+5,Barred Spiral,2,9074
+5,Barred Spiral,3,9687
+6,Unbarred Tight Spiral,1,10149
+6,Unbarred Tight Spiral,2,10303
+6,Unbarred Tight Spiral,3,11545
+7,Unbarred Loose Spiral,1,12015
+7,Unbarred Loose Spiral,2,12603
+7,Unbarred Loose Spiral,3,13219
+8,Edge-on w/o Bulge,1,14448
+8,Edge-on w/o Bulge,2,14492
+8,Edge-on w/o Bulge,3,15005
+9,Edge-on w/ Bulge,1,16849
+9,Edge-on w/ Bulge,2,17073
+9,Edge-on w/ Bulge,3,17115

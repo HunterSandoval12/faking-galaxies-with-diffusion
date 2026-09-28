@@ -1,0 +1,25 @@
+# Python environment and caches
+.venv/
+__pycache__/
+*.pyc
+
+# Personal working notes are kept locally only
+NOTES.txt
+
+# Release files (published as GitHub Release weights-v1, not tracked); keep only their checksum list
+weights/*
+!weights/SHA256SUMS.txt
+
+# Large or regenerable outputs - reproduce with the pipeline in README.md
+runs/
+runs_cls/
+data/synthetic/
+data/cache/
+results/cache/
+
+# Data folders the Colab tutorials create when run outside Colab (~10 GB)
+galaxy10_tutorial_drive/
+galaxy10_tutorial_work/
+
+# Stray logs in the project root
+/*.log

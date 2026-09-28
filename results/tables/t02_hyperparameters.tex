@@ -1,0 +1,26 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{Model and training settings}
+\label{tab:t02_hyperparameters}
+\begin{tabular}{lrr}
+\toprule
+Stage & Setting & Value \\
+\midrule
+Diffusion & Base model & runwayml/stable-diffusion-v1-5 (Stable Diffusion 1.5) \\
+Diffusion & Fine-tuning & LoRA rank 8, alpha 8 on to\_q/to\_k/to\_v/to\_out.0 \\
+Diffusion & Conditioning & learned 11 x 77 x 768 class table (10 classes + null), CLIP-initialised \\
+Diffusion & Optimiser & AdamW, LR 0.0001, weight decay 0.01, constant\_with\_warmup (500 warmup) \\
+Diffusion & Training & 10,000 steps, batch 8, 512px, bf16, cond. dropout 0.1, flips + 90-deg rotations, seed 42 \\
+Diffusion & Selected checkpoint & 10,000 steps (chosen on validation KID + class fidelity) \\
+Sampling & Sampler & DPM-Solver++ (2nd order), 30 steps, classifier-free guidance 3.0 \\
+Sampling & Output & 512 px generated, Lanczos-downsampled to native 256 px \\
+Classifier & Model & ResNet-18, ImageNet-pretrained, 256 px input \\
+Classifier & Optimiser & AdamW, LR 0.001 (tuned on validation from 1e-4 / 3e-4 / 1e-3), weight decay 0.05, 1 warmup epoch + cosine \\
+Classifier & Training & 30 epochs, batch 128, bf16, flips + 90-deg rotations, best epoch by validation accuracy \\
+Classifier & Seeds & 3 per condition (8 for real-only, Cigar-Shaped and scarcity-control conditions) \\
+Evaluation & Realism & per-class FID / KID (Inception-v3 pool features) vs validation \\
+Evaluation & Classification & accuracy, macro-F1, per-class P/R/F1 on the held-out test set (used once); 95\% paired bootstrap CIs, 2,000 resamples \\
+\bottomrule
+\end{tabular}
+\end{table}

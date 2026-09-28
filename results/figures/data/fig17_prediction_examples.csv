@@ -1,0 +1,11 @@
+test_position,dataset_index,true_class,true_name,Real only prediction,Real only seeds agreeing,Real only correct,Synth. only prediction,Synth. only seeds agreeing,Synth. only correct,50% mix prediction,50% mix seeds agreeing,50% mix correct
+87,708,0,Disturbed,Round Smooth,8/8,False,In-between Round,3/3,False,Round Smooth,3/3,False
+391,2807,1,Merging,Merging,8/8,True,Merging,2/3,True,Merging,3/3,True
+517,3839,2,Round Smooth,Round Smooth,8/8,True,Round Smooth,3/3,True,Round Smooth,3/3,True
+1049,7157,3,In-between Round,In-between Round,5/8,True,In-between Round,3/3,True,In-between Round,3/3,True
+1136,7802,4,Cigar-Shaped Smooth,Cigar-Shaped Smooth,8/8,True,Cigar-Shaped Smooth,3/3,True,Cigar-Shaped Smooth,3/3,True
+1146,7855,4,Cigar-Shaped Smooth,Cigar-Shaped Smooth,7/8,True,In-between Round,2/3,False,Cigar-Shaped Smooth,2/3,True
+1275,8784,5,Barred Spiral,Barred Spiral,7/8,True,Unbarred Loose Spiral,2/3,False,Barred Spiral,2/3,True
+1643,11194,6,Unbarred Tight Spiral,Unbarred Tight Spiral,8/8,True,Unbarred Tight Spiral,3/3,True,Unbarred Tight Spiral,3/3,True
+1734,11824,7,Unbarred Loose Spiral,Unbarred Loose Spiral,8/8,True,Unbarred Loose Spiral,3/3,True,Unbarred Loose Spiral,3/3,True
+2569,17445,9,Edge-on w/ Bulge,Edge-on w/ Bulge,8/8,True,Edge-on w/ Bulge,3/3,True,Edge-on w/ Bulge,3/3,True

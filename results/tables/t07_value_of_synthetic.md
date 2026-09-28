@@ -1,0 +1,11 @@
+### What synthetic images add, by amount of real data (paired: identical real images)
+
+| Real data available | Real only: test acc. % | + synthetic (to 12,330): test acc. % | Gain (pts) [95% CI] |
+|---|---|---|---|
+| 10% (~1,233) | 77.0 [75.7, 78.4] | 79.2 [77.8, 80.5] | +2.16 [+1.19, +3.13] |
+| 25% (~3,082) | 81.9 [80.6, 83.2] | 82.5 [81.3, 83.8] | +0.60 [-0.18, +1.38] |
+| 50% (~6,165) | 84.7 [83.4, 85.8] | 84.8 [83.6, 86.0] | +0.17 [-0.50, +0.89] |
+| 75% (~9,248) | 85.8 [84.6, 86.9] | 85.6 [84.4, 86.7] | -0.15 [-0.83, +0.50] |
+| 90% (~11,097) | 86.1 [84.9, 87.2] | 86.1 [84.9, 87.2] | +0.01 [-0.60, +0.66] |
+
+The gain grows as real data gets scarcer and is clear only at 10% real.

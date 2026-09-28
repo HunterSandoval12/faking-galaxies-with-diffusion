@@ -1,0 +1,55 @@
+{
+  "environment": {
+    "gpu": "NVIDIA GeForce RTX 5090",
+    "torch": "2.14.0+cu130",
+    "cuda": "13.0",
+    "python": "3.14.7",
+    "date": "2026-09-27 17:04"
+  },
+  "generator": {
+    "batch1": {
+      "mean_ms": 920.2138199820183,
+      "median_ms": 899.0325499908067,
+      "p95_ms": 1013.164930063067,
+      "min_ms": 868.0088999681175,
+      "n": 20
+    },
+    "batch20_per_image": {
+      "mean_ms": 479.2167990002781,
+      "median_ms": 479.2346050031483,
+      "p95_ms": 480.5007419991307,
+      "min_ms": 477.3572449979838,
+      "n": 5
+    },
+    "resize_512_to_256_ms": {
+      "mean_ms": 2.143395011080429,
+      "median_ms": 2.0504999556578696,
+      "p95_ms": 2.428820100612939,
+      "min_ms": 2.0244999323040247,
+      "n": 20
+    },
+    "peak_mem_gb": 12.06
+  },
+  "classifier": {
+    "forward_only_batch1": {
+      "mean_ms": 1.601591799291782,
+      "median_ms": 1.5556500293314457,
+      "p95_ms": 1.9137200142722575,
+      "min_ms": 1.430800068192184,
+      "n": 1000
+    },
+    "end_to_end_batch1": {
+      "mean_ms": 1.7399110026890412,
+      "median_ms": 1.6814499977044761,
+      "p95_ms": 2.0919049798976626,
+      "min_ms": 1.5138000017032027,
+      "n": 1000
+    },
+    "cudnn_benchmark": false,
+    "cudnn_deterministic": true
+  },
+  "settings": {
+    "generator": "checkpoint-10000, guidance 3, 30 DPM-Solver++ steps, fp16, 512 px (+ resize to 256)",
+    "classifier": "ResNet-18, 256 px, bf16 autocast, channels_last, batch 1"
+  }
+}

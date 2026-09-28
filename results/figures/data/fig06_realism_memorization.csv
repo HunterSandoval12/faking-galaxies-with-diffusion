@@ -1,0 +1,12 @@
+class,name,fid_synthetic,fid_real_reference,kid_synthetic_x1e3
+0,Disturbed,61.31,24.5,59.01
+1,Merging,63.41,19.45,69.49
+2,Round Smooth,41.87,9.35,53.56
+3,In-between Round,48.42,11.21,64.83
+4,Cigar-Shaped Smooth,80.57,39.35,55.09
+5,Barred Spiral,67.68,20.08,65.1
+6,Unbarred Tight Spiral,53.36,19.22,50.33
+7,Unbarred Loose Spiral,52.61,14.69,55.51
+8,Edge-on w/o Bulge,63.72,24.32,49.58
+9,Edge-on w/ Bulge,67.4,17.57,70.88
+memorization,synthetic median,0.9265,validation median,0.9503

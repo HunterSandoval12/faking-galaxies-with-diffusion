@@ -1,0 +1,8 @@
+run,label,kid_4000,kid_6000,kid_8000,kid_10000
+lora_r8,"rank 8, LR 1e-4 (baseline)",57.08,66.71,68.99,55.03
+lora_r8_seed43,"baseline, 2nd seed",56.47,61.71,66.63,81.83
+lora_r4,rank 4,56.46,65.51,61.11,64.31
+lora_r16,rank 16,58.98,58.93,53.78,65.39
+lora_r8_lr5e-5,LR 5e-5,55.31,63.48,69.14,62.66
+lora_r8_lr2e-4,LR 2e-4,52.7,66.23,75.02,56.54
+lora_r8_cosine,cosine LR schedule,57.73,72.72,69.48,68.14

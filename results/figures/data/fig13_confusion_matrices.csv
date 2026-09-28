@@ -1,0 +1,201 @@
+condition,true,predicted,fraction
+A_replace0,Disturbed,Disturbed,0.4881
+A_replace0,Disturbed,Merging,0.0382
+A_replace0,Disturbed,Round Smooth,0.0533
+A_replace0,Disturbed,In-between Round,0.078
+A_replace0,Disturbed,Cigar-Shaped Smooth,0.0279
+A_replace0,Disturbed,Barred Spiral,0.0828
+A_replace0,Disturbed,Unbarred Tight Spiral,0.0311
+A_replace0,Disturbed,Unbarred Loose Spiral,0.1449
+A_replace0,Disturbed,Edge-on w/o Bulge,0.0374
+A_replace0,Disturbed,Edge-on w/ Bulge,0.0183
+A_replace0,Merging,Disturbed,0.0045
+A_replace0,Merging,Merging,0.8974
+A_replace0,Merging,Round Smooth,0.0284
+A_replace0,Merging,In-between Round,0.0085
+A_replace0,Merging,Cigar-Shaped Smooth,0.0
+A_replace0,Merging,Barred Spiral,0.01
+A_replace0,Merging,Unbarred Tight Spiral,0.0075
+A_replace0,Merging,Unbarred Loose Spiral,0.0349
+A_replace0,Merging,Edge-on w/o Bulge,0.007
+A_replace0,Merging,Edge-on w/ Bulge,0.002
+A_replace0,Round Smooth,Disturbed,0.0123
+A_replace0,Round Smooth,Merging,0.011
+A_replace0,Round Smooth,Round Smooth,0.935
+A_replace0,Round Smooth,In-between Round,0.0006
+A_replace0,Round Smooth,Cigar-Shaped Smooth,0.0
+A_replace0,Round Smooth,Barred Spiral,0.0028
+A_replace0,Round Smooth,Unbarred Tight Spiral,0.0335
+A_replace0,Round Smooth,Unbarred Loose Spiral,0.0025
+A_replace0,Round Smooth,Edge-on w/o Bulge,0.0
+A_replace0,Round Smooth,Edge-on w/ Bulge,0.0022
+A_replace0,In-between Round,Disturbed,0.0183
+A_replace0,In-between Round,Merging,0.0137
+A_replace0,In-between Round,Round Smooth,0.0046
+A_replace0,In-between Round,In-between Round,0.9398
+A_replace0,In-between Round,Cigar-Shaped Smooth,0.0133
+A_replace0,In-between Round,Barred Spiral,0.0004
+A_replace0,In-between Round,Unbarred Tight Spiral,0.0075
+A_replace0,In-between Round,Unbarred Loose Spiral,0.0025
+A_replace0,In-between Round,Edge-on w/o Bulge,0.0
+A_replace0,In-between Round,Edge-on w/ Bulge,0.0
+A_replace0,Cigar-Shaped Smooth,Disturbed,0.03
+A_replace0,Cigar-Shaped Smooth,Merging,0.0
+A_replace0,Cigar-Shaped Smooth,Round Smooth,0.0175
+A_replace0,Cigar-Shaped Smooth,In-between Round,0.1175
+A_replace0,Cigar-Shaped Smooth,Cigar-Shaped Smooth,0.775
+A_replace0,Cigar-Shaped Smooth,Barred Spiral,0.0
+A_replace0,Cigar-Shaped Smooth,Unbarred Tight Spiral,0.0
+A_replace0,Cigar-Shaped Smooth,Unbarred Loose Spiral,0.0
+A_replace0,Cigar-Shaped Smooth,Edge-on w/o Bulge,0.05
+A_replace0,Cigar-Shaped Smooth,Edge-on w/ Bulge,0.01
+A_replace0,Barred Spiral,Disturbed,0.0217
+A_replace0,Barred Spiral,Merging,0.0168
+A_replace0,Barred Spiral,Round Smooth,0.0
+A_replace0,Barred Spiral,In-between Round,0.0012
+A_replace0,Barred Spiral,Cigar-Shaped Smooth,0.0025
+A_replace0,Barred Spiral,Barred Spiral,0.9107
+A_replace0,Barred Spiral,Unbarred Tight Spiral,0.0119
+A_replace0,Barred Spiral,Unbarred Loose Spiral,0.0291
+A_replace0,Barred Spiral,Edge-on w/o Bulge,0.0037
+A_replace0,Barred Spiral,Edge-on w/ Bulge,0.0025
+A_replace0,Unbarred Tight Spiral,Disturbed,0.0096
+A_replace0,Unbarred Tight Spiral,Merging,0.0023
+A_replace0,Unbarred Tight Spiral,Round Smooth,0.0389
+A_replace0,Unbarred Tight Spiral,In-between Round,0.0073
+A_replace0,Unbarred Tight Spiral,Cigar-Shaped Smooth,0.0014
+A_replace0,Unbarred Tight Spiral,Barred Spiral,0.0105
+A_replace0,Unbarred Tight Spiral,Unbarred Tight Spiral,0.8352
+A_replace0,Unbarred Tight Spiral,Unbarred Loose Spiral,0.0897
+A_replace0,Unbarred Tight Spiral,Edge-on w/o Bulge,0.0018
+A_replace0,Unbarred Tight Spiral,Edge-on w/ Bulge,0.0032
+A_replace0,Unbarred Loose Spiral,Disturbed,0.0418
+A_replace0,Unbarred Loose Spiral,Merging,0.0217
+A_replace0,Unbarred Loose Spiral,Round Smooth,0.0113
+A_replace0,Unbarred Loose Spiral,In-between Round,0.0045
+A_replace0,Unbarred Loose Spiral,Cigar-Shaped Smooth,0.0019
+A_replace0,Unbarred Loose Spiral,Barred Spiral,0.0334
+A_replace0,Unbarred Loose Spiral,Unbarred Tight Spiral,0.0959
+A_replace0,Unbarred Loose Spiral,Unbarred Loose Spiral,0.7756
+A_replace0,Unbarred Loose Spiral,Edge-on w/o Bulge,0.0117
+A_replace0,Unbarred Loose Spiral,Edge-on w/ Bulge,0.0023
+A_replace0,Edge-on w/o Bulge,Disturbed,0.0118
+A_replace0,Edge-on w/o Bulge,Merging,0.0041
+A_replace0,Edge-on w/o Bulge,Round Smooth,0.0
+A_replace0,Edge-on w/o Bulge,In-between Round,0.0
+A_replace0,Edge-on w/o Bulge,Cigar-Shaped Smooth,0.0065
+A_replace0,Edge-on w/o Bulge,Barred Spiral,0.0036
+A_replace0,Edge-on w/o Bulge,Unbarred Tight Spiral,0.0148
+A_replace0,Edge-on w/o Bulge,Unbarred Loose Spiral,0.0095
+A_replace0,Edge-on w/o Bulge,Edge-on w/o Bulge,0.9182
+A_replace0,Edge-on w/o Bulge,Edge-on w/ Bulge,0.0314
+A_replace0,Edge-on w/ Bulge,Disturbed,0.0018
+A_replace0,Edge-on w/ Bulge,Merging,0.0067
+A_replace0,Edge-on w/ Bulge,Round Smooth,0.0009
+A_replace0,Edge-on w/ Bulge,In-between Round,0.0
+A_replace0,Edge-on w/ Bulge,Cigar-Shaped Smooth,0.0013
+A_replace0,Edge-on w/ Bulge,Barred Spiral,0.0049
+A_replace0,Edge-on w/ Bulge,Unbarred Tight Spiral,0.0
+A_replace0,Edge-on w/ Bulge,Unbarred Loose Spiral,0.0085
+A_replace0,Edge-on w/ Bulge,Edge-on w/o Bulge,0.0237
+A_replace0,Edge-on w/ Bulge,Edge-on w/ Bulge,0.9521
+A_replace1,Disturbed,Disturbed,0.2845
+A_replace1,Disturbed,Merging,0.051
+A_replace1,Disturbed,Round Smooth,0.0467
+A_replace1,Disturbed,In-between Round,0.0849
+A_replace1,Disturbed,Cigar-Shaped Smooth,0.0467
+A_replace1,Disturbed,Barred Spiral,0.0849
+A_replace1,Disturbed,Unbarred Tight Spiral,0.0318
+A_replace1,Disturbed,Unbarred Loose Spiral,0.3142
+A_replace1,Disturbed,Edge-on w/o Bulge,0.0127
+A_replace1,Disturbed,Edge-on w/ Bulge,0.0425
+A_replace1,Merging,Disturbed,0.0797
+A_replace1,Merging,Merging,0.5976
+A_replace1,Merging,Round Smooth,0.0584
+A_replace1,Merging,In-between Round,0.0784
+A_replace1,Merging,Cigar-Shaped Smooth,0.0186
+A_replace1,Merging,Barred Spiral,0.0385
+A_replace1,Merging,Unbarred Tight Spiral,0.0106
+A_replace1,Merging,Unbarred Loose Spiral,0.089
+A_replace1,Merging,Edge-on w/o Bulge,0.008
+A_replace1,Merging,Edge-on w/ Bulge,0.0212
+A_replace1,Round Smooth,Disturbed,0.0202
+A_replace1,Round Smooth,Merging,0.0261
+A_replace1,Round Smooth,Round Smooth,0.8106
+A_replace1,Round Smooth,In-between Round,0.0463
+A_replace1,Round Smooth,Cigar-Shaped Smooth,0.0
+A_replace1,Round Smooth,Barred Spiral,0.0093
+A_replace1,Round Smooth,Unbarred Tight Spiral,0.0471
+A_replace1,Round Smooth,Unbarred Loose Spiral,0.0303
+A_replace1,Round Smooth,Edge-on w/o Bulge,0.0017
+A_replace1,Round Smooth,Edge-on w/ Bulge,0.0084
+A_replace1,In-between Round,Disturbed,0.0587
+A_replace1,In-between Round,Merging,0.0244
+A_replace1,In-between Round,Round Smooth,0.0033
+A_replace1,In-between Round,In-between Round,0.8394
+A_replace1,In-between Round,Cigar-Shaped Smooth,0.0277
+A_replace1,In-between Round,Barred Spiral,0.0022
+A_replace1,In-between Round,Unbarred Tight Spiral,0.0044
+A_replace1,In-between Round,Unbarred Loose Spiral,0.0255
+A_replace1,In-between Round,Edge-on w/o Bulge,0.0022
+A_replace1,In-between Round,Edge-on w/ Bulge,0.0122
+A_replace1,Cigar-Shaped Smooth,Disturbed,0.0133
+A_replace1,Cigar-Shaped Smooth,Merging,0.02
+A_replace1,Cigar-Shaped Smooth,Round Smooth,0.0
+A_replace1,Cigar-Shaped Smooth,In-between Round,0.34
+A_replace1,Cigar-Shaped Smooth,Cigar-Shaped Smooth,0.5333
+A_replace1,Cigar-Shaped Smooth,Barred Spiral,0.0
+A_replace1,Cigar-Shaped Smooth,Unbarred Tight Spiral,0.0
+A_replace1,Cigar-Shaped Smooth,Unbarred Loose Spiral,0.0
+A_replace1,Cigar-Shaped Smooth,Edge-on w/o Bulge,0.02
+A_replace1,Cigar-Shaped Smooth,Edge-on w/ Bulge,0.0733
+A_replace1,Barred Spiral,Disturbed,0.0612
+A_replace1,Barred Spiral,Merging,0.0131
+A_replace1,Barred Spiral,Round Smooth,0.0011
+A_replace1,Barred Spiral,In-between Round,0.012
+A_replace1,Barred Spiral,Cigar-Shaped Smooth,0.0131
+A_replace1,Barred Spiral,Barred Spiral,0.6918
+A_replace1,Barred Spiral,Unbarred Tight Spiral,0.0393
+A_replace1,Barred Spiral,Unbarred Loose Spiral,0.1541
+A_replace1,Barred Spiral,Edge-on w/o Bulge,0.0066
+A_replace1,Barred Spiral,Edge-on w/ Bulge,0.0077
+A_replace1,Unbarred Tight Spiral,Disturbed,0.0171
+A_replace1,Unbarred Tight Spiral,Merging,0.0159
+A_replace1,Unbarred Tight Spiral,Round Smooth,0.0305
+A_replace1,Unbarred Tight Spiral,In-between Round,0.0147
+A_replace1,Unbarred Tight Spiral,Cigar-Shaped Smooth,0.0195
+A_replace1,Unbarred Tight Spiral,Barred Spiral,0.0855
+A_replace1,Unbarred Tight Spiral,Unbarred Tight Spiral,0.5104
+A_replace1,Unbarred Tight Spiral,Unbarred Loose Spiral,0.2943
+A_replace1,Unbarred Tight Spiral,Edge-on w/o Bulge,0.0073
+A_replace1,Unbarred Tight Spiral,Edge-on w/ Bulge,0.0049
+A_replace1,Unbarred Loose Spiral,Disturbed,0.0708
+A_replace1,Unbarred Loose Spiral,Merging,0.0285
+A_replace1,Unbarred Loose Spiral,Round Smooth,0.0138
+A_replace1,Unbarred Loose Spiral,In-between Round,0.0181
+A_replace1,Unbarred Loose Spiral,Cigar-Shaped Smooth,0.0147
+A_replace1,Unbarred Loose Spiral,Barred Spiral,0.0872
+A_replace1,Unbarred Loose Spiral,Unbarred Tight Spiral,0.0777
+A_replace1,Unbarred Loose Spiral,Unbarred Loose Spiral,0.6658
+A_replace1,Unbarred Loose Spiral,Edge-on w/o Bulge,0.0112
+A_replace1,Unbarred Loose Spiral,Edge-on w/ Bulge,0.0121
+A_replace1,Edge-on w/o Bulge,Disturbed,0.0142
+A_replace1,Edge-on w/o Bulge,Merging,0.0032
+A_replace1,Edge-on w/o Bulge,Round Smooth,0.0
+A_replace1,Edge-on w/o Bulge,In-between Round,0.0032
+A_replace1,Edge-on w/o Bulge,Cigar-Shaped Smooth,0.0995
+A_replace1,Edge-on w/o Bulge,Barred Spiral,0.0158
+A_replace1,Edge-on w/o Bulge,Unbarred Tight Spiral,0.0032
+A_replace1,Edge-on w/o Bulge,Unbarred Loose Spiral,0.0032
+A_replace1,Edge-on w/o Bulge,Edge-on w/o Bulge,0.4929
+A_replace1,Edge-on w/o Bulge,Edge-on w/ Bulge,0.3649
+A_replace1,Edge-on w/ Bulge,Disturbed,0.0167
+A_replace1,Edge-on w/ Bulge,Merging,0.0239
+A_replace1,Edge-on w/ Bulge,Round Smooth,0.0
+A_replace1,Edge-on w/ Bulge,In-between Round,0.0215
+A_replace1,Edge-on w/ Bulge,Cigar-Shaped Smooth,0.0299
+A_replace1,Edge-on w/ Bulge,Barred Spiral,0.0251
+A_replace1,Edge-on w/ Bulge,Unbarred Tight Spiral,0.0108
+A_replace1,Edge-on w/ Bulge,Unbarred Loose Spiral,0.0024
+A_replace1,Edge-on w/ Bulge,Edge-on w/o Bulge,0.0084
+A_replace1,Edge-on w/ Bulge,Edge-on w/ Bulge,0.8614

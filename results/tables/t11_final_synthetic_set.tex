@@ -1,0 +1,23 @@
+\begin{table}[t]
+\centering
+\footnotesize
+\caption{The final synthetic set (12,330 images): realism, class fidelity, memorization}
+\label{tab:t11_final_synthetic_set}
+\begin{tabular}{lrrrrrrrrr}
+\toprule
+Class & Images & FID synthetic & FID real ref. & KID x1e3 & Class fidelity & Real val. recall & NN sim. synthetic (median) & NN sim. validation (median) & Above max real NN sim. \\
+\midrule
+Disturbed & 736 & 61.3 & 24.5 & 59.0 & 0.289 & 0.554 & 0.928 & 0.952 & 0 \\
+Merging & 1287 & 63.4 & 19.4 & 69.5 & 0.870 & 0.903 & 0.928 & 0.952 & 0 \\
+Round Smooth & 1844 & 41.9 & 9.4 & 53.6 & 0.909 & 0.964 & 0.944 & 0.962 & 0 \\
+In-between Round & 1415 & 48.4 & 11.2 & 64.8 & 0.784 & 0.940 & 0.941 & 0.961 & 0 \\
+Cigar-Shaped Smooth & 233 & 80.6 & 39.3 & 55.1 & 0.283 & 0.840 & 0.923 & 0.951 & 0 \\
+Barred Spiral & 1427 & 67.7 & 20.1 & 65.1 & 0.804 & 0.875 & 0.915 & 0.943 & 0 \\
+Unbarred Tight Spiral & 1273 & 53.4 & 19.2 & 50.3 & 0.788 & 0.761 & 0.930 & 0.950 & 0 \\
+Unbarred Loose Spiral & 1816 & 52.6 & 14.7 & 55.5 & 0.669 & 0.798 & 0.924 & 0.947 & 0 \\
+Edge-on w/o Bulge & 993 & 63.7 & 24.3 & 49.6 & 0.955 & 0.906 & 0.899 & 0.932 & 0 \\
+Edge-on w/ Bulge & 1306 & 67.4 & 17.6 & 70.9 & 0.659 & 0.950 & 0.906 & 0.941 & 0 \\
+\bottomrule
+\end{tabular}
+\\[2pt]\parbox{\linewidth}{\scriptsize FID/KID vs validation at equal n. NN sim.: cosine similarity (Inception features) to the nearest working-pool image; 0 synthetic images are closer than the closest unseen validation image (no memorization).}
+\end{table}
