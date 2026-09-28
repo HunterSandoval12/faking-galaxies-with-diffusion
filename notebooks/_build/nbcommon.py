@@ -63,6 +63,11 @@ def install_cells(nb, requirements, table):
 
 Google Colab preinstalls all of these, so the next cell normally installs nothing. It checks each library and runs
 `pip` only for a missing or too-old one. On a **second run**, set `SKIP_INSTALL = True` to skip the check entirely.
+
+**One conflict to remove.** Colab also preinstalls an old version of `torchao` (a quantization library this tutorial
+does not use). Recent `peft` versions refuse to create LoRA adapters while a `torchao` older than 0.16 is installed
+("ImportError: Found an incompatible version of torchao"), so the cell uninstalls such an old `torchao`
+(`pip uninstall -y torchao`). This check runs even when `SKIP_INSTALL = True`.
 """)
     reqs = ",\n                ".join(f'"{k}": "{v}"' for k, v in requirements.items())
     nb.code(f"""
@@ -98,10 +103,22 @@ else:
         print("Done. If a library was upgraded, restart the runtime (Runtime > Restart session) and run again.")
     else:
         print("All required libraries are already installed; nothing to install.")
+
+# peft (LoRA) raises an ImportError while a torchao older than 0.16 is installed; this notebook does not use torchao.
+TORCHAO_MIN = "0.16"
+old_torchao = installed_version("torchao")
+if old_torchao is not None and version_tuple(old_torchao) < version_tuple(TORCHAO_MIN):
+    print(f"Removing torchao {{old_torchao}} (incompatible with peft; not used here)")
+    subprocess.check_call([sys.executable, "-m", "pip", "uninstall", "-y", "-q", "torchao"])
+    import importlib
+    importlib.invalidate_caches()  # let this running session see that torchao is gone
 """)
     nb.code("""
 # Verify the versions. The notebook stops here with a clear message if a requirement is not met.
 assert sys.version_info >= (3, 10), f"Python >= 3.10 required, found {sys.version.split()[0]}"
+torchao = installed_version("torchao")
+assert torchao is None or version_tuple(torchao) >= version_tuple(TORCHAO_MIN), \\
+    f"torchao {torchao} is installed and breaks peft: run !pip uninstall -y torchao"
 for pkg, minimum in REQUIREMENTS.items():
     have = installed_version(pkg)
     assert have is not None, f"{pkg} is not installed (pip install '{pkg}>={minimum}')"
