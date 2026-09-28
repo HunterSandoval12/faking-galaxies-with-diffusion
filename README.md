@@ -43,11 +43,14 @@ Step-by-step notebooks that run in Google Colab (index and requirements: [`noteb
 |---|---|---|
 | 1 | Dataset: download, inputs and labels, the training / validation / testing directories, real vs. synthetic | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/HunterSandoval12/faking-galaxies-with-diffusion/blob/main/notebooks/01_Dataset_Tutorial.ipynb) |
 | 2 | Model description: the ResNet-18 classifier and the diffusion generator, layer by layer | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/HunterSandoval12/faking-galaxies-with-diffusion/blob/main/notebooks/02_Model_Description_Tutorial.ipynb) |
+| 3 | Model optimization: losses, AdamW, learning-rate search and schedules, batch sizes, early stopping, training vs. validation curves | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/HunterSandoval12/faking-galaxies-with-diffusion/blob/main/notebooks/03_Model_Optimization_Tutorial.ipynb) |
 | 4 | Basic testing: classify one test galaxy and generate one synthetic galaxy | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/HunterSandoval12/faking-galaxies-with-diffusion/blob/main/notebooks/04_Basic_Testing_Tutorial.ipynb) |
+| 5 | Basic fine-tuning: fine-tune the ImageNet ResNet-18 and Stable Diffusion 1.5 (LoRA); the loss decreases (FAST mode by default) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/HunterSandoval12/faking-galaxies-with-diffusion/blob/main/notebooks/05_Basic_Finetuning_Tutorial.ipynb) |
+| 6 | Full training: generator, generation, real / mixed / synthetic classifiers over several seeds, validation and test convergence, augmentation (FAST mode by default) | [![Open in Colab](https://colab.research.google.com/assets/colab-badge.svg)](https://colab.research.google.com/github/HunterSandoval12/faking-galaxies-with-diffusion/blob/main/notebooks/06_Full_Training_Tutorial.ipynb) |
 
-## Pretrained weights (GitHub Release `weights-v1`)
+## Pretrained weights and synthetic set (GitHub Release `weights-v1`)
 
-The trained models are attached to the release
+The trained models, the synthetic training set and the training logs are attached to the release
 [`weights-v1`](https://github.com/HunterSandoval12/faking-galaxies-with-diffusion/releases/tag/weights-v1) and
 download with plain `wget` (no login):
 
@@ -66,6 +69,8 @@ sha256sum -c --ignore-missing SHA256SUMS.txt
 | `class_embeddings.safetensors` | The generator's learned class-embedding table (11 x 77 x 768; row 10 = null class) | 2.5 MiB | `87a7fb2720dc4a0dedb66c3417265b63d02ff7b829ea86465dfc11ee2468a2cb` |
 | `lora_config.json` | The generator's training configuration (rank, alpha, target layers, ...) | 2 KiB | `29dfa782205ee5875677d8cfb358c08c8aab8290442fb1526abcab5ba7b8baf1` |
 | `synthetic_examples.zip` | Sample indices 0-3 of every class of the final synthetic set (the synthetic images of Fig. 2) | 5.9 MiB | `eb108eb7029d6856af54899bcb7e54296c798f1cde0bc4ba9ff3bb1e6db6f5d5` |
+| `synthetic_set.zip` | The full synthetic training set: 12,330 PNG images (the paper's `main_cfg3_steps30`; per class as many as the real training images) + `manifest.csv` (class, sample index, seed) | 1,878,505,895 bytes (1.75 GiB) | `b2e19570046a86827d821aaf49e7e36353217963b1240fe4e7aa650447f38948` |
+| `training_logs.zip` | Per-epoch logs of the classifier runs (incl. the learning-rate search) and the LoRA run (also in `results/training_logs/`) | 193 KiB | `f945a827dae1c68d3e534f92472f17b86ba136bfa541dccdf8b36392583a24d9` |
 | `LICENSE-CreativeML-OpenRAIL-M.txt` | The license of the LoRA weights | 14 KiB | `be351ebe7ac01bcdbb018639aadcfd38f136b7dc3f2a3d4d3a24db51d1b210ef` |
 
 The same checksums are in [`weights/SHA256SUMS.txt`](weights/SHA256SUMS.txt). The classifiers were selected on the
@@ -83,6 +88,8 @@ files equal the fp32 weights cast to fp16.
   v1.5 and are distributed under the **CreativeML Open RAIL-M** license
   ([`licenses/CreativeML-OpenRAIL-M.txt`](licenses/CreativeML-OpenRAIL-M.txt)); its use-based restrictions
   (Attachment A) apply to them and to any use of the generator.
+- The **synthetic images** (`synthetic_set.zip`, `synthetic_examples.zip`) were generated with the project's Stable
+  Diffusion 1.5-based generator, so the CreativeML Open RAIL-M license applies to them as well.
 - The **classifiers** were fine-tuned from torchvision's ImageNet-pretrained ResNet-18 weights
   (`ResNet18_Weights.IMAGENET1K_V1`, BSD-3-Clause) on Galaxy10 DECaLS; they are released under the MIT license of
   this repository, and the dataset's own terms apply to the data they were trained on.
@@ -95,7 +102,7 @@ files equal the fp32 weights cast to fp16.
 | `diffusion/` | LoRA fine-tuning (`train_lora.py`), sampling (`sample.py`), FID/KID evaluation (`eval_fid.py`), tuning drivers, final generation (`generate_synthetic.py`) and checks (`check_synthetic.py`) |
 | `classifier/` | ResNet-18 training with real/synthetic mixing (`train_classifier.py`), class fidelity, experiment driver (`run_experiments.py`), the one-time test evaluation (`evaluate_test.py`), re-runs with extra logging (`reproduce_runs.py`) |
 | `analysis/` | Figures, tables and statistics for the paper |
-| `results/` | 18 figures (PNG + PDF + CSV data) and 14 tables (CSV + Markdown + LaTeX) |
+| `results/` | 18 figures (PNG + PDF + CSV data), 14 tables (CSV + Markdown + LaTeX) and the training logs (`results/training_logs/`) |
 | `notebooks/` | Google Colab tutorials (built by the scripts in `notebooks/_build/`) |
 | `tools/` | `make_release_assets.py`: builds the release files and their checksums |
 | `licenses/` | License of the LoRA weights (CreativeML Open RAIL-M) |

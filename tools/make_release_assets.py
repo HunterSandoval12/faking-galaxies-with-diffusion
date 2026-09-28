@@ -11,6 +11,8 @@ Writes to --out:
   class_embeddings.safetensors               the generator's learned class-embedding table (11 x 77 x 768)
   lora_config.json                           the generator's training configuration
   synthetic_examples.zip                     sample indices 0-3 of every class of the synthetic set (PNG)
+  synthetic_set.zip                          the full synthetic training set: 12,330 PNG images + manifest.csv
+  training_logs.zip                          per-epoch / per-step training logs (also in results/training_logs/)
   LICENSE-CreativeML-OpenRAIL-M.txt          the license of the LoRA weights (derived from Stable Diffusion v1.5)
   SHA256SUMS.txt                             SHA-256 checksum of every file above
 
@@ -136,6 +138,50 @@ def export_synthetic_examples(synthetic_dir, out):
     print(f"synthetic_examples.zip: {N_SYNTHETIC_EXAMPLES} images x {len(CLASS_NAMES)} classes")
 
 
+def export_synthetic_set(synthetic_dir, out):
+    """All 12,330 images of the final synthetic set, sorted by class and sample index (= the order the paper's
+    training sets drew from), as lossless PNGs, plus manifest.csv. Fixed timestamps: the zip is reproducible."""
+    folders = [f"{c}_{n.replace(' ', '_')}" for c, n in enumerate(CLASS_NAMES)]
+    rows, n = ["file,label,class_name,sample_index,seed"], 0
+    with zipfile.ZipFile(out / "synthetic_set.zip", "w", compression=zipfile.ZIP_STORED) as z:
+        for c in range(len(CLASS_NAMES)):
+            items = []
+            for shard in sorted(synthetic_dir.glob(f"class{c}_part*.npz")):
+                s = np.load(shard)
+                items += list(zip(s["sample_index"].tolist(), s["seeds"].tolist(), s["images"]))
+            items.sort(key=lambda t: t[0])
+            assert [k for k, _, _ in items] == list(range(len(items))), f"class {c}: sample indices not 0..n-1"
+            for k, seed, img in items:
+                name = f"synthetic_set/{folders[c]}/{k:05d}_seed{seed}.png"
+                buf = io.BytesIO()
+                Image.fromarray(img).save(buf, format="PNG")
+                z.writestr(zipfile.ZipInfo(name, date_time=(2026, 9, 27, 0, 0, 0)), buf.getvalue())
+                rows.append(f"{name},{c},{CLASS_NAMES[c]},{k},{seed}")
+                n += 1
+        z.writestr(zipfile.ZipInfo("synthetic_set/manifest.csv", date_time=(2026, 9, 27, 0, 0, 0)),
+                   "\n".join(rows) + "\n")
+    print(f"synthetic_set.zip: {n} images")
+
+
+def export_training_logs(project, logs_dir, out):
+    """Training logs used by the tutorials: the 14 verified classifier reproductions (per epoch, with training
+    accuracy and validation loss), the classifier learning-rate search, and the chosen generator's LoRA run."""
+    runs = {f"classifier/{d.name}.jsonl": d / "train_log.jsonl"
+            for d in sorted((project / "runs_cls" / "repro").glob("A_replace*_seed*")) if d.is_dir()}
+    runs.update({f"classifier_lr_search/{d.name}.jsonl": d / "train_log.jsonl"
+                 for d in sorted((project / "runs_cls").glob("real_lr*_seed*")) if d.is_dir()})
+    runs["generator/lora_r8.jsonl"] = project / "runs" / "lora_r8" / "train_log.jsonl"
+    ver = json.loads((project / "runs_cls" / "repro" / "verification.json").read_text())
+    assert all(v["log_identical"] and v["weights_identical"] for v in ver.values()), "unverified reproductions"
+    with zipfile.ZipFile(out / "training_logs.zip", "w", compression=zipfile.ZIP_DEFLATED) as z:
+        for rel, src in runs.items():
+            data = src.read_bytes().replace(b"\r\n", b"\n")
+            (logs_dir / rel).parent.mkdir(parents=True, exist_ok=True)
+            (logs_dir / rel).write_bytes(data)
+            z.writestr(zipfile.ZipInfo(f"training_logs/{rel}", date_time=(2026, 9, 27, 0, 0, 0)), data)
+    print(f"training_logs.zip: {len(runs)} logs (also written to {logs_dir})")
+
+
 def main():
     ap = argparse.ArgumentParser(description=__doc__, formatter_class=argparse.RawDescriptionHelpFormatter)
     ap.add_argument("--project", type=Path, required=True, help="directory with runs/, runs_cls/ and data/synthetic/")
@@ -145,6 +191,8 @@ def main():
     export_classifiers(args.project / "runs_cls" / "exp", args.out)
     export_generator(args.project / "runs" / "lora_r8" / "checkpoint-10000", args.out)
     export_synthetic_examples(args.project / "data" / "synthetic" / "main_cfg3_steps30", args.out)
+    export_synthetic_set(args.project / "data" / "synthetic" / "main_cfg3_steps30", args.out)
+    export_training_logs(args.project, REPO_ROOT / "results" / "training_logs", args.out)
     shutil.copy2(REPO_ROOT / "licenses" / "CreativeML-OpenRAIL-M.txt", args.out / "LICENSE-CreativeML-OpenRAIL-M.txt")
     files = sorted(p for p in args.out.iterdir() if p.name != "SHA256SUMS.txt")
     sums = "".join(f"{sha256(p)}  {p.name}\n" for p in files)
