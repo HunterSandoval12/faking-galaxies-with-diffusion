@@ -8,6 +8,8 @@ Stable Diffusion 1.5 model is fine-tuned with LoRA on Galaxy10 DECaLS to generat
 galaxies; ResNet-18 classifiers are trained on real, synthetic and mixed data and evaluated once on a
 fixed, held-out set of real images.
 
+**Paper:** [Faking Galaxies with Diffusion (PDF)](paper/Faking_Galaxies_with_Diffusion.pdf) - 5-page main text, references and appendix (17 pages).
+
 ## Research questions
 
 - **Primary:** Does a classifier trained on synthetic data - instead of real data - perform comparably on held-out
@@ -101,6 +103,7 @@ files equal the fp32 weights cast to fp16.
 | `data/prepare_splits.py` | Stratified 70/15/15 split; removes exact duplicates and overlapping cutouts; `data/splits/` holds the split indices |
 | `diffusion/` | LoRA fine-tuning (`train_lora.py`), sampling (`sample.py`), FID/KID evaluation (`eval_fid.py`), tuning drivers, final generation (`generate_synthetic.py`) and checks (`check_synthetic.py`) |
 | `classifier/` | ResNet-18 training with real/synthetic mixing (`train_classifier.py`), class fidelity, experiment driver (`run_experiments.py`), the one-time test evaluation (`evaluate_test.py`), re-runs with extra logging (`reproduce_runs.py`) |
+| `paper/` | The paper (PDF) |
 | `analysis/` | Figures, tables and statistics for the paper |
 | `results/` | 18 figures (PNG + PDF + CSV data), 14 tables (CSV + Markdown + LaTeX) and the training logs (`results/training_logs/`) |
 | `notebooks/` | Google Colab tutorials (built by the scripts in `notebooks/_build/`) |
