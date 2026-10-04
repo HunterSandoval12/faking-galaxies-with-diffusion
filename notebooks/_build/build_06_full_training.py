@@ -15,7 +15,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from nbcommon import REPO_URL, SD_REPO, SPEC_URL, Notebook, download_cells, drive_cells, install_cells  # noqa: E402
+from nbcommon import REPO_URL, SD_REPO, Notebook, download_cells, drive_cells, install_cells  # noqa: E402
 from nbtraining import (PAPER_TIMES, classifier_code_cell, dataset_cells, lora_code_cell,  # noqa: E402
                         precision_cells)
 
@@ -34,7 +34,7 @@ md, code = nb.md, nb.code
 md("# Galaxy10 DECaLS: Full Training Tutorial")
 md(f"""
 **Project:** *Faking Galaxies with Diffusion: A Real-vs-Synthetic Benchmark for Morphology Classification*
-Hunter Sandoval. Course project, University of New Mexico. Tutorial 6 of 6.
+Hunter Sandoval, University of New Mexico. Tutorial 6 of 6.
 
 **Scope.** The project's whole training pipeline, end to end:
 
@@ -66,7 +66,6 @@ md(f"""
 7. P. Micikevicius et al., "Mixed Precision Training," ICLR 2018, arXiv:1710.03740.
 8. Galaxy10 DECaLS: https://github.com/henrysky/Galaxy10
 9. Project code, logs, model weights and synthetic set: {REPO_URL}
-10. Course tutorial requirements: {SPEC_URL}
 """)
 
 md("# Setup")
@@ -379,8 +378,8 @@ All runs above use the project's augmentation: every training image is randomly 
 90 degrees each time it is used (galaxy morphology does not depend on orientation, so this is 8 valid versions of every
 image). The cell repeats the real-only runs **without** augmentation and compares the curves. Without it the network
 sees the same pixels every epoch: its training loss falls faster, but the validation and test losses stay higher, so
-the gap between training and held-out losses widens. That gap is what the course's *"if the losses do not converge,
-add data augmentation"* refers to; the project uses augmentation in every run.
+the gap between training and held-out losses widens. Augmentation narrows that gap, which is why the project
+uses it in every run.
 """)
 code("""
 t = time.time()

@@ -13,7 +13,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from nbcommon import REPO_URL, SPEC_URL, Notebook, download_cells, drive_cells, install_cells  # noqa: E402
+from nbcommon import REPO_URL, Notebook, download_cells, drive_cells, install_cells  # noqa: E402
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--times", type=Path)
@@ -29,7 +29,7 @@ md, code = nb.md, nb.code
 md("# Galaxy10 DECaLS: Model Optimization Tutorial")
 md("""
 **Project:** *Faking Galaxies with Diffusion: A Real-vs-Synthetic Benchmark for Morphology Classification*
-Hunter Sandoval. Course project, University of New Mexico. Tutorial 3 of 6.
+Hunter Sandoval, University of New Mexico. Tutorial 3 of 6.
 
 **Scope.** How the project's two models were optimized, and why:
 
@@ -59,7 +59,6 @@ md(f"""
 7. K. He et al., "Deep Residual Learning for Image Recognition," CVPR 2016, arXiv:1512.03385.
 8. Project code, logs and model weights: {REPO_URL} (training code: `classifier/train_classifier.py`,
    `diffusion/train_lora.py`; logs: `results/training_logs/`).
-9. Course tutorial requirements: {SPEC_URL}
 """)
 
 md("# Setup")

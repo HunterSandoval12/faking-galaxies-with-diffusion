@@ -1,7 +1,6 @@
 # Google Colab tutorials
 
-Tutorials for the project, following the course's tutorial specification
-([Colab-tutorial-list.md](https://github.com/pattichis/projects/blob/main/Colab-tutorial-list.md)). Each notebook
+Tutorials for the project. Each notebook
 runs top to bottom in Google Colab and keeps its data on Google Drive in `MyDrive/galaxy10_tutorial/`. Outside
 Colab it uses local folders instead (`galaxy10_tutorial_drive/`, `galaxy10_tutorial_work/`; both git-ignored).
 

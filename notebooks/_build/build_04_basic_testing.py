@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from nbcommon import REPO_URL, SD_REPO, SPEC_URL, Notebook, download_cells, drive_cells, install_cells  # noqa: E402
+from nbcommon import REPO_URL, SD_REPO, Notebook, download_cells, drive_cells, install_cells  # noqa: E402
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--times", type=Path, help="JSON from a local test run: step times (s), peak memory, results")
@@ -51,7 +51,7 @@ PAPER_PREDICTIONS = {"real only": 4, "synthetic only": 4, "50% mix": 4}  # saved
 md("# Galaxy10 DECaLS: Basic Testing Tutorial")
 md("""
 **Project:** *Faking Galaxies with Diffusion: A Real-vs-Synthetic Benchmark for Morphology Classification*
-Hunter Sandoval. Course project, University of New Mexico. Tutorial 4 of 6.
+Hunter Sandoval, University of New Mexico. Tutorial 4 of 6.
 
 **Scope.** Download the pretrained models with `wget` and run them on **one test example**:
 
@@ -76,7 +76,6 @@ md(f"""
 6. Galaxy10 DECaLS: https://github.com/henrysky/Galaxy10 ; images: DESI Legacy Imaging Surveys,
    https://www.legacysurvey.org (A. Dey et al., AJ 157, 168, 2019, arXiv:1804.08657).
 7. Project code and model weights: {REPO_URL}
-8. Course tutorial requirements: {SPEC_URL}
 """)
 
 # ================================================================================ setup

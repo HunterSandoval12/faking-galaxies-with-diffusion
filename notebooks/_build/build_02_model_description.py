@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from nbcommon import REPO_URL, SD_REPO, SPEC_URL, Notebook, download_cells, drive_cells, install_cells  # noqa: E402
+from nbcommon import REPO_URL, SD_REPO, Notebook, download_cells, drive_cells, install_cells  # noqa: E402
 
 ap = argparse.ArgumentParser()
 ap.add_argument("--times", type=Path, help="JSON from a local test run: step times (s) and peak memory")
@@ -44,7 +44,7 @@ md, code = nb.md, nb.code
 md("# Galaxy10 DECaLS: Model Description Tutorial")
 md(f"""
 **Project:** *Faking Galaxies with Diffusion: A Real-vs-Synthetic Benchmark for Morphology Classification*
-Hunter Sandoval. Course project, University of New Mexico. Tutorial 2 of 6.
+Hunter Sandoval, University of New Mexico. Tutorial 2 of 6.
 
 **Scope.** The project uses two models, and this tutorial shows how to access every element of both:
 
@@ -77,7 +77,6 @@ md(f"""
 9. Hugging Face `diffusers` (https://github.com/huggingface/diffusers) and `peft` (https://github.com/huggingface/peft).
 10. Galaxy10 DECaLS dataset: https://github.com/henrysky/Galaxy10
 11. Project code and model weights: {REPO_URL}
-12. Course tutorial requirements: {SPEC_URL}
 """)
 
 # ================================================================================ setup

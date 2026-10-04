@@ -15,7 +15,6 @@ REPO_URL = f"https://github.com/{GITHUB_REPO}"
 RELEASE_TAG = "weights-v1"
 RELEASE_URL = f"{REPO_URL}/releases/download/{RELEASE_TAG}"
 SD_REPO = "stable-diffusion-v1-5/stable-diffusion-v1-5"
-SPEC_URL = "https://github.com/pattichis/projects/blob/main/Colab-tutorial-list.md"
 SHA256 = {name: digest for digest, name in
           (line.split() for line in (REPO_ROOT / "weights" / "SHA256SUMS.txt").read_text().splitlines())}
 CLASS_NAMES = ["Disturbed", "Merging", "Round Smooth", "In-between Round Smooth", "Cigar-Shaped Smooth",

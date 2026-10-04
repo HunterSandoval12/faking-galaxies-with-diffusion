@@ -1,6 +1,6 @@
 """Builds notebooks/01_Dataset_Tutorial.ipynb (run from the project root).
 
-The notebook follows https://github.com/pattichis/projects/blob/main/Colab-tutorial-list.md:
+Contents:
 sections/subsections each in their own text cell, scope + references at the top, versioned
 requirements with asserts and a skippable install cell, Google Drive mounting, training /
 validation / testing directories with storage requirements, hardware, execution times,
@@ -55,7 +55,7 @@ def code(text):
 md("# Galaxy10 DECaLS: Dataset Tutorial")
 md("""
 **Project:** *Faking Galaxies with Diffusion: A Real-vs-Synthetic Benchmark for Morphology Classification*
-Hunter Sandoval. Course project, University of New Mexico. Tutorial 1 of 6.
+Hunter Sandoval, University of New Mexico. Tutorial 1 of 6.
 
 **Scope.** This tutorial defines every element of the dataset used in the project, from the download to the
 `training` / `validation` / `testing` directories that the other five tutorials read. You will:
@@ -87,7 +87,6 @@ md("""
    (the closest prior work to this project).
 6. Project code and model weights: __REPO_URL__. `data/prepare_splits.py` is the
    split code reproduced in this notebook.
-7. Course tutorial requirements: https://github.com/pattichis/projects/blob/main/Colab-tutorial-list.md
 """)
 
 # ================================================================================ setup

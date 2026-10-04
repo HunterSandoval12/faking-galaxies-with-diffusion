@@ -14,7 +14,7 @@ import sys
 from pathlib import Path
 
 sys.path.insert(0, str(Path(__file__).resolve().parent))
-from nbcommon import REPO_URL, SD_REPO, SPEC_URL, Notebook, download_cells, drive_cells, install_cells  # noqa: E402
+from nbcommon import REPO_URL, SD_REPO, Notebook, download_cells, drive_cells, install_cells  # noqa: E402
 from nbtraining import (PAPER_TIMES, classifier_code_cell, dataset_cells, lora_code_cell,  # noqa: E402
                         precision_cells)
 
@@ -33,7 +33,7 @@ md, code = nb.md, nb.code
 md("# Galaxy10 DECaLS: Basic Fine-tuning Tutorial")
 md(f"""
 **Project:** *Faking Galaxies with Diffusion: A Real-vs-Synthetic Benchmark for Morphology Classification*
-Hunter Sandoval. Course project, University of New Mexico. Tutorial 5 of 6.
+Hunter Sandoval, University of New Mexico. Tutorial 5 of 6.
 
 **Scope.** Both of the project's models are *fine-tuned* versions of pretrained models. This tutorial downloads the
 pretrained models, sets up the project's optimization loops, and retrains them for a short while to show the loss going
@@ -62,7 +62,6 @@ md(f"""
 8. Hugging Face diffusers LoRA training example (the structure the project's `diffusion/train_lora.py` follows):
    https://github.com/huggingface/diffusers/blob/main/examples/text_to_image/train_text_to_image_lora.py
 9. Project code and model weights: {REPO_URL}
-10. Course tutorial requirements: {SPEC_URL}
 """)
 
 md("# Setup")

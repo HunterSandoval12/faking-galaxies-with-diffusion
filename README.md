@@ -1,6 +1,6 @@
 # Faking Galaxies with Diffusion: A Real-vs-Synthetic Benchmark for Morphology Classification
 
-Hunter Sandoval. Course project, University of New Mexico.
+Hunter Sandoval, University of New Mexico.
 
 Can a diffusion model, fine-tuned to generate galaxy imagery from scratch, produce training data realistic
 enough that a classifier trained on it performs comparably to one trained on real images? A pretrained
