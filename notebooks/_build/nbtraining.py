@@ -118,7 +118,7 @@ IMAGENET_STD = torch.tensor([0.229, 0.224, 0.225], device=DEVICE).view(1, 3, 1, 
 
 
 def to_input(images_u8, augment):
-    \"\"\"uint8 NHWC on the GPU -> normalised float NCHW; optional random flip + 90-degree rotation (as in the project).\"\"\"
+    \"\"\"uint8 NHWC on the GPU -> normalized float NCHW; optional random flip + 90-degree rotation (as in the project).\"\"\"
     x = images_u8.permute(0, 3, 1, 2).float().div_(255.0)
     if augment:
         flip = torch.rand(x.shape[0], device=x.device) < 0.5

@@ -196,9 +196,9 @@ plt.show()
 md("# Classify the test galaxy")
 md("""
 Loading and preparing the input are the same as in Tutorial 2: torchvision's ResNet-18 with a 10-class last layer,
-filled from the downloaded file, and the image scaled to 0-1 and normalised with the ImageNet mean and standard
+filled from the downloaded file, and the image scaled to 0-1 and normalized with the ImageNet mean and standard
 deviation (`to_input` from `classifier/train_classifier.py`). `model.eval()` and `torch.no_grad()` switch off
-training behaviour and gradient bookkeeping. The softmax turns the 10 outputs into probabilities.
+training behavior and gradient bookkeeping. The softmax turns the 10 outputs into probabilities.
 """)
 code(f"""
 import torch.nn as nn
@@ -358,7 +358,7 @@ plt.tight_layout()
 plt.show()
 """)
 md("""
-In the paper, a classifier trained on real images recognises only 28% of the synthetic Cigar-Shaped Smooth images as
+In the paper, a classifier trained on real images recognizes only 28% of the synthetic Cigar-Shaped Smooth images as
 Cigar-Shaped Smooth (the lowest of all classes; many look like the *In-between Round Smooth* or edge-on classes), so do
 not be surprised if the classifier disagrees on the generated galaxy. Try other classes (`GEN_LABEL`) and sample numbers
 (`GEN_K`; only samples 0-3 have a copy in `synthetic_examples.zip` to compare with).

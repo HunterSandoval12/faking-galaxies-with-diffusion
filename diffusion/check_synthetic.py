@@ -101,7 +101,7 @@ def main():
         f"{np.mean([r['fid_ref'] for r in realism.values()]):>9.1f}"
         f"{1e3 * np.mean([r['kid_syn'] for r in realism.values()]):>13.2f}{1e3 * np.mean([r['kid_ref'] for r in realism.values()]):>13.2f}")
 
-    # 3. memorization: nearest working-pool neighbour (cosine similarity of Inception features)
+    # 3. memorization: nearest working-pool neighbor (cosine similarity of Inception features)
     dev = torch.device("cuda")
     T = torch.nn.functional.normalize(torch.from_numpy(t_feats).float().to(dev), dim=1)
 

@@ -73,7 +73,7 @@ md(f"""
 6. E. J. Hu et al., "LoRA: Low-Rank Adaptation of Large Language Models," ICLR 2022, arXiv:2106.09685.
 7. J. Ho and T. Salimans, "Classifier-Free Diffusion Guidance," arXiv:2207.12598, 2022.
 8. A. Radford et al., "Learning Transferable Visual Models From Natural Language Supervision," ICML 2021,
-   arXiv:2103.00020 (CLIP, which initialised the class embeddings).
+   arXiv:2103.00020 (CLIP, which initialized the class embeddings).
 9. Hugging Face `diffusers` (https://github.com/huggingface/diffusers) and `peft` (https://github.com/huggingface/peft).
 10. Galaxy10 DECaLS dataset: https://github.com/henrysky/Galaxy10
 11. Project code and model weights: {REPO_URL}
@@ -228,7 +228,7 @@ md("## Input layer")
 md("""
 The first layer, `conv1`, is a convolution with 3 input channels, so the classifier expects a **4-D float tensor**
 `[batch, 3, height, width]`. Tutorial 1's images are uint8 arrays `[256, 256, 3]`, so each image is (1) reordered to
-channels-first, (2) scaled to 0-1 and (3) normalised with the ImageNet mean and standard deviation, because the network
+channels-first, (2) scaled to 0-1 and (3) normalized with the ImageNet mean and standard deviation, because the network
 started from ImageNet-pretrained weights. This is `to_input` from the project's `classifier/train_classifier.py`
 (without its random flips and rotations, which are only used in training). The images keep their native 256 x 256
 size. The cell loads one validation image of each class from Tutorial 1's zip file.
@@ -257,7 +257,7 @@ md("## Intermediate layers")
 md("""
 ResNet-18 is a **convolutional neural network with residual connections** (reference 1). After the *stem*
 (`conv1` 7 x 7, batch norm, ReLU, 3 x 3 max-pooling) come four stages, `layer1` to `layer4`, of two *basic blocks*
-each. A basic block computes two 3 x 3 convolutions, each followed by batch normalisation, and adds the block's input
+each. A basic block computes two 3 x 3 convolutions, each followed by batch normalization, and adds the block's input
 back to the result (the residual or skip connection) before the final ReLU:
 
 ```
@@ -293,12 +293,12 @@ print(classifier)
 md("## Output layer")
 md("""
 The last layer, `fc`, is a fully connected (linear) layer from 512 features to **10 outputs, one per class**. It has
-**no activation function** inside the model: its outputs are *logits* (unnormalised scores). The **softmax** function
+**no activation function** inside the model: its outputs are *logits* (unnormalized scores). The **softmax** function
 turns them into class probabilities, `p_k = exp(z_k) / sum_j exp(z_j)`, and the predicted class is the largest one.
 
 The classifier was trained with the **cross-entropy loss**, `L = -log p_y` for an image of true class `y`, averaged
 over the batch (PyTorch's `F.cross_entropy`, which applies the softmax itself). It is small when the model gives the
-true class a high probability. Optimisation (AdamW, learning rate schedule, epochs) is the subject of Tutorial 3. The
+true class a high probability. Optimization (AdamW, learning rate schedule, epochs) is the subject of Tutorial 3. The
 cell classifies the 10 validation images and computes the loss both with PyTorch and by hand.
 """)
 code("""
@@ -579,7 +579,7 @@ md("""
 | | Classifier | Generator |
 |---|---|---|
 | Architecture | ResNet-18 (CNN with residual connections) | Stable Diffusion 1.5: VAE + U-Net with cross-attention |
-| Input | normalised image, 3 x 256 x 256 | latent 4 x 64 x 64 (from a 512 x 512 image) + class embedding 77 x 768 + step t |
+| Input | normalized image, 3 x 256 x 256 | latent 4 x 64 x 64 (from a 512 x 512 image) + class embedding 77 x 768 + step t |
 | Output | 10 logits -> softmax probabilities | predicted noise, 4 x 64 x 64 (linear output) |
 | Training loss | cross-entropy | mean squared error on the noise |
 | Trained parameters | all 11.2 million | LoRA adapters + class table: 2.2 million (U-Net and VAE frozen) |

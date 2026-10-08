@@ -72,7 +72,7 @@ def metrics(y, pred):
 
 
 def f1_per_class(y, pred):
-    """Vectorised per-class F1 for one (y, pred) pair."""
+    """Vectorized per-class F1 for one (y, pred) pair."""
     k = len(CLASS_NAMES)
     cm = np.bincount(y * k + pred, minlength=k * k).reshape(k, k)
     tp = np.diag(cm).astype(float)
@@ -120,7 +120,7 @@ def main():
     memo = {}
 
     def stat_boot(names, kind, cls=None):
-        """(point estimate, bootstrap samples) of the seed-mean statistic for a condition (memoised)."""
+        """(point estimate, bootstrap samples) of the seed-mean statistic for a condition (memoized)."""
         key = (tuple(names), kind, cls)
         if key not in memo:
             memo[key] = _stat_boot(names, kind, cls)

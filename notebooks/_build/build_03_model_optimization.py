@@ -178,7 +178,7 @@ md("""
 Both models are trained with **AdamW** (references 1 and 2): Adam's per-parameter adaptive steps (running averages of
 the gradient and of its square, with decay rates `betas = (0.9, 0.999)` and `eps = 1e-8`) plus **decoupled weight
 decay**, which shrinks every weight a little at each step independently of the gradient scaling (plain Adam with L2
-regularisation would weaken the decay for weights with large gradients).
+regularization would weaken the decay for weights with large gradients).
 
 | | Classifier (ResNet-18) | Generator (LoRA) |
 |---|---|---|
@@ -240,7 +240,7 @@ plt.show()
 md("## Adjusting the learning rate during training")
 md("""
 - **Classifier: linear warm-up for one epoch, then cosine decay to 0**, updated after every batch. The warm-up keeps the
-  first, large gradients of the freshly initialised output layer from damaging the pretrained features (reference 4);
+  first, large gradients of the freshly initialized output layer from damaging the pretrained features (reference 4);
   the cosine decay takes large steps early and ever smaller ones at the end, so the final epochs fine-tune
   (reference 3).
 - **Generator: linear warm-up over 500 steps, then constant** (`constant_with_warmup` in diffusers). LoRA fine-tuning is
@@ -383,22 +383,22 @@ md("""
   without augmentation. Early on the dotted loss is lower because it averages over an epoch in which the model keeps
   improving; later they agree.
 - **Real-only and 50% synthetic**: the training loss falls to ~0.05 while the validation loss levels off at ~0.5-0.6.
-  That gap is the usual **generalisation gap**: the network has nearly memorised its 12,330 training images, but the
+  That gap is the usual **generalization gap**: the network has nearly memorized its 12,330 training images, but the
   validation loss only drifts up slightly after its minimum (epoch 21) and the validation accuracy keeps creeping up until the learning rate reaches 0,
   so these runs do **not** overfit in the harmful sense. The kept epochs are late (median 26.5 and 28).
 - **Synthetic-only** overfits: its training loss goes to ~0.02, but the validation loss is lowest at **epoch 5** and
   then *rises* to ~1.95, while the validation accuracy still improves until about epoch 19 and then plateaus at ~64%.
   The model becomes ever more confident on real galaxies it gets wrong (confident mistakes are expensive in
-  cross-entropy), because what it memorises are properties of the *synthetic* images that real galaxies do not share:
+  cross-entropy), because what it memorizes are properties of the *synthetic* images that real galaxies do not share:
   this is the domain gap that is the paper's main result. Selecting the kept epoch on validation accuracy (median 19)
   stops it where it is most useful.
 - **Loss vs. accuracy for early stopping**: the two criteria can disagree (synthetic-only: epoch 5 by loss, 19 by
   accuracy). The project selects on validation accuracy, the metric it reports.
 - **What kept overfitting in check**: ImageNet-pretrained features (the network starts from general image features
-  instead of memorising from scratch); random flips and 90-degree rotations (galaxy morphology does not depend on
+  instead of memorizing from scratch); random flips and 90-degree rotations (galaxy morphology does not depend on
   orientation, so this multiplies the effective data by 8); weight decay 0.05; the cosine schedule; and selecting the
   epoch on the validation set, which is never trained on. For the generator: only 0.24% of its parameters are trained
-  (LoRA rank 8 + class table), and checkpoints were chosen on validation realism and fidelity; a memorisation check found
+  (LoRA rank 8 + class table), and checkpoints were chosen on validation realism and fidelity; a memorization check found
   no synthetic image closer to a training image than unseen real images are.
 """)
 

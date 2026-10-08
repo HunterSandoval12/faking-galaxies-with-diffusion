@@ -108,7 +108,7 @@ md("""
   accuracy is about __FAST_ACC__. The released classifier (30 epochs, all data) reaches 86.7% validation accuracy.
 - **Generator**: the per-step diffusion loss is noisy and nearly flat (by design, see Tutorial 3); the loss on a fixed
   evaluation batch decreases slightly (__LORA_EVAL__). The generated galaxies change from Stable Diffusion's idea of a
-  "telescope image of a galaxy" towards the survey's look; the released generator (10,000 steps) produces the images of
+  "telescope image of a galaxy" toward the survey's look; the released generator (10,000 steps) produces the images of
   the paper's synthetic set.
 """)
 
@@ -170,7 +170,7 @@ md("## The pretrained model and the optimization loop")
 md("""
 **Download the pretrained model.** `resnet18(weights=ResNet18_Weights.IMAGENET1K_V1)` downloads torchvision's
 ImageNet-trained weights (45 MB, from PyTorch's servers). Its 1,000-class output layer is replaced by a new, randomly
-initialised 10-class layer; everything else starts from the ImageNet features.
+initialized 10-class layer; everything else starts from the ImageNet features.
 
 **The optimization loop** is the project's `classifier/train_classifier.py`, reproduced below: every step takes a
 batch of 128 images, applies random flips and 90-degree rotations, runs the network in mixed precision, computes the
@@ -196,11 +196,11 @@ classifier, history, step_losses, best_epoch = train_classifier(train_x, train_y
                                                                  epochs=CLS_EPOCHS, seed=0)
 TIMES["classifier fine-tuning"] = time.time() - t
 memory_report("classifier fine-tuning")
-print(f"kept epoch {best_epoch}; {len(step_losses)} optimisation steps in {TIMES['classifier fine-tuning']:.0f} s")
+print(f"kept epoch {best_epoch}; {len(step_losses)} optimization steps in {TIMES['classifier fine-tuning']:.0f} s")
 """)
 md("## The loss decreases")
 md("""
-Left: the training loss of every optimisation step (grey) and its running mean over 10 steps. Right: the loss and
+Left: the training loss of every optimization step (gray) and its running mean over 10 steps. Right: the loss and
 accuracy after each epoch on the training batches (augmented) and on the validation set.
 
 In FAST mode an epoch is only 10 steps, so the **validation** loss can jump up in the first epochs before it falls: the
@@ -218,7 +218,7 @@ run = np.convolve(step_losses, np.ones(10) / 10, mode="valid")
 axes[0].plot(np.arange(10, len(step_losses) + 1), run, color="#2a78d6", lw=2, label="mean of 10 steps")
 axes[0].axhline(np.log(10), color="gray", ls=":", lw=1)
 axes[0].text(len(step_losses), np.log(10), "ln 10 (random guess)", ha="right", va="bottom", fontsize=8, color="gray")
-axes[0].set_xlabel("optimisation step")
+axes[0].set_xlabel("optimization step")
 axes[0].set_ylabel("cross-entropy loss")
 axes[0].legend(fontsize=8)
 ep = [0] + [h["epoch"] for h in history]
@@ -266,7 +266,7 @@ The generator starts from **Stable Diffusion 1.5** (`{SD_REPO}` on Hugging Face;
 downloaded on first use). Its 860-million-parameter U-Net stays frozen. What is trained:
 
 - **LoRA adapters** (rank 8) on the attention projections `to_q`, `to_k`, `to_v`, `to_out.0` of all 16 transformer
-  blocks: 1,594,368 values, initialised so that the adapters start as a no-op (their `B` matrices are zero);
+  blocks: 1,594,368 values, initialized so that the adapters start as a no-op (their `B` matrices are zero);
 - a **class-embedding table** (11 x 77 x 768) that replaces the text prompt: it starts as CLIP's encoding of prompts
   such as "a telescope image of a galaxy, barred spiral morphology", plus the empty prompt as the null class (the CLIP
   text encoder is downloaded once for this and then discarded).
@@ -372,9 +372,9 @@ plt.show()
 
 md("# Summary")
 md("""
-Both pretrained models were fine-tuned with the project's loops: the classifier's loss fell from ln 10 towards the
+Both pretrained models were fine-tuned with the project's loops: the classifier's loss fell from ln 10 toward the
 level of the released model within a few epochs, and the generator's fixed-batch loss fell while its images moved from
-generic Stable Diffusion galaxies towards the survey's look. Tutorial 6 runs the whole pipeline (generator,
+generic Stable Diffusion galaxies toward the survey's look. Tutorial 6 runs the whole pipeline (generator,
 synthetic data, classifiers on real / mixed / synthetic data) and follows the losses until they converge.
 """)
 code("""

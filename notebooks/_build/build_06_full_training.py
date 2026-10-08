@@ -191,7 +191,7 @@ print(f"loaded in {TIMES['load images']:.0f} s")
 md("# Stage 1: Train the generator")
 md("""
 The project's LoRA training loop (Tutorial 5 explains it step by step): Stable Diffusion 1.5 frozen, LoRA adapters on
-the attention projections and a CLIP-initialised class-embedding table trained with the diffusion (noise-prediction)
+the attention projections and a CLIP-initialized class-embedding table trained with the diffusion (noise-prediction)
 loss. Besides the noisy per-step loss the loop reports the loss on a fixed evaluation batch (one validation image per
 class, fixed noise and noise levels), which moves only when the model does.
 """)
@@ -463,8 +463,8 @@ for name, fname in files.items():
 md("# Summary")
 md("""
 In every run the training, validation and test losses fell together, the validation and test curves agree, and the
-seeds agree; the full-length runs show them levelling off. Augmentation keeps the held-out losses close to the training loss. Trained on real
-images the classifier generalises best; replacing half of them with synthetic galaxies costs little, but training on
+seeds agree; the full-length runs show them leveling off. Augmentation keeps the held-out losses close to the training loss. Trained on real
+images the classifier generalizes best; replacing half of them with synthetic galaxies costs little, but training on
 synthetic images alone leaves a large gap on real galaxies: the paper's main finding.
 """)
 code("""

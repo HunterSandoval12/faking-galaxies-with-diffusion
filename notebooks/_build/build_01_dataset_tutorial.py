@@ -99,7 +99,7 @@ md("""
 | NumPy | 1.23 | 2.5.2 | `pip install "numpy>=1.23"` | arrays |
 | h5py | 3.7 | 3.15.1 | `pip install "h5py>=3.7"` | reading the dataset file (HDF5) |
 | scikit-learn | 1.1 | 1.9.1 | `pip install "scikit-learn>=1.1"` | stratified split |
-| SciPy | 1.9 | 1.18.1 | `pip install "scipy>=1.9"` | sky-coordinate neighbour search |
+| SciPy | 1.9 | 1.18.1 | `pip install "scipy>=1.9"` | sky-coordinate neighbor search |
 | Pillow | 9.0 | 12.3.0 | `pip install "pillow>=9.0"` | reading and writing PNG / JPEG images |
 | Matplotlib | 3.6 | 3.11.2 | `pip install "matplotlib>=3.6"` | figures |
 
@@ -182,7 +182,7 @@ slower than a local disk, so the Colab column is an estimate.
 | Download Galaxy10 DECaLS (2.55 GiB) and copy it to Drive (first session only) | __T_DOWNLOAD__ | 2-6 min, depends on the connection |
 | Copy the dataset file from Drive (later sessions, instead of the previous row) | < 10 s | 1-2 min |
 | Checksum + load into memory | __T_VERIFY__ | 1-2 min |
-| Cleaning + split (hashing 17,736 images, neighbour search) | __T_SPLIT__ | < 30 s |
+| Cleaning + split (hashing 17,736 images, neighbor search) | __T_SPLIT__ | < 30 s |
 | Write the PNG directories + zip them to Drive (first session only) | __T_EXPORT__ | 5-10 min |
 | Unzip from Drive (later sessions, instead of the previous row) | __T_UNZIP__ | 1-3 min |
 | Everything else (figures, synthetic-image download, checks, extension demo) | ~10 s | < 1 min |
@@ -213,7 +213,7 @@ A Colab machine is wiped when the session ends, so anything worth keeping is sto
 
 ```python
 from google.colab import drive
-drive.mount("/content/drive")   # asks you to authorise access the first time
+drive.mount("/content/drive")   # asks you to authorize access the first time
 ```
 
 Your Drive is then the folder `/content/drive/MyDrive/`. This tutorial keeps its files in
@@ -392,11 +392,11 @@ print(f"loaded {images.shape} {images.dtype} ({images.nbytes / 2**30:.2f} GiB in
 md("# The inputs: what is an image?")
 md("""
 - The dataset is **one 4-D NumPy array** of shape `(17736, 256, 256, 3)` and type `uint8`: 17,736 images of
-  256 x 256 pixels with 3 colour channels.
+  256 x 256 pixels with 3 color channels.
 - **Each input is therefore a 3-D NumPy array** of shape `(height, width, channels) = (256, 256, 3)` holding integers
-  from 0 to 255. The three channels are an RGB colour rendering of the survey's g, r and z filters (green, red and
+  from 0 to 255. The three channels are an RGB color rendering of the survey's g, r and z filters (green, red and
   near-infrared light).
-- Each image is a **sky cutout centred on one galaxy**. 16,916 images use 0.262 arcsec per pixel (a 67 x 67 arcsec
+- Each image is a **sky cutout centered on one galaxy**. 16,916 images use 0.262 arcsec per pixel (a 67 x 67 arcsec
   patch of sky) and 820 use 0.524 arcsec per pixel (134 x 134 arcsec), so the same pixel size can mean two different
   sky areas.
 - The project's classifier reads the images at this native 256 x 256 size; the diffusion model works at 512 x 512
@@ -679,7 +679,7 @@ it to a file. The real images are the paper's Fig. 2 draw (4 random training ima
 in the cell), so each row is a row of the paper's Fig. 2. Change `GRID_CLASSES` to see other classes.
 
 Compare the rare *Cigar-Shaped Smooth* row with the others: in the paper, a classifier trained on real images
-recognises only 28% of the synthetic Cigar-Shaped Smooth images as that class, the lowest of all classes.
+recognizes only 28% of the synthetic Cigar-Shaped Smooth images as that class, the lowest of all classes.
 """)
 code("""
 from IPython.display import display
@@ -877,7 +877,7 @@ import io
 
 
 def download_cutout(ra_deg, dec_deg, pxscale_arcsec=0.262, size=256, layer="ls-dr8"):
-    \"\"\"Download a size x size RGB cutout centred on (RA, Dec), in degrees, as a uint8 array.\"\"\"
+    \"\"\"Download a size x size RGB cutout centered on (RA, Dec), in degrees, as a uint8 array.\"\"\"
     url = (f"https://www.legacysurvey.org/viewer/cutout.jpg?ra={ra_deg:.6f}&dec={dec_deg:.6f}"
            f"&layer={layer}&pixscale={pxscale_arcsec}&size={size}")
     request = urllib.request.Request(url, headers={"User-Agent": "galaxy10-dataset-tutorial"})
@@ -907,7 +907,7 @@ Adding an image means saving it in the right class folder and recording it in th
 into training (the problem the overlap cleaning removed). `add_to_training` therefore refuses such an image. It only
 warns about an overlap with an existing training image, which is harmless but a near-duplicate.
 
-To add a genuinely new galaxy you need its **RA, Dec and label**, for example from the Galaxy Zoo DECaLS catalogue
+To add a genuinely new galaxy you need its **RA, Dec and label**, for example from the Galaxy Zoo DECaLS catalog
 (reference 3), where Galaxy10's labels come from:
 
 ```python

@@ -137,7 +137,7 @@ machine:
 
 ```python
 from google.colab import drive
-drive.mount("/content/drive")   # asks you to authorise access the first time
+drive.mount("/content/drive")   # asks you to authorize access the first time
 ```
 
 Outside Colab, the cell uses the same local folders as Tutorial 1 (`./galaxy10_tutorial_drive` and
