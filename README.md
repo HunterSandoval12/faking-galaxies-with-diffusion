@@ -164,29 +164,29 @@ own licenses (see *Licenses of the weights* above and the table below).
 All code in this repository was written for this project, with Claude Code (Anthropic) used as an AI-assisted
 development tool. The LoRA fine-tuning loop follows the structure of the Hugging Face diffusers example
 `examples/text_to_image/train_text_to_image_lora.py` (Apache-2.0). `analysis/validate_palette.py` is a Python port of
-a colour-blind-safety palette validator supplied with Claude Code's data-visualization guidance.
+a color-blind-safety palette validator supplied with Claude Code's data-visualization guidance.
 
 **Related work.** The closest prior work is GalCatDiff [18], a diffusion model that generates galaxy images per
-morphology category (with category embeddings) and evaluates how realistic they are (e.g. their colour and size
+morphology category (with category embeddings) and evaluates how realistic they are (e.g. their color and size
 distributions); this project instead measures whether class-conditional synthetic galaxies can train a classifier.
 
 **Model weights and data (not original to this project):**
 
-| Item | Source | Licence / terms |
+| Item | Source | License / terms |
 |---|---|---|
 | Stable Diffusion v1.5 weights | Released by RunwayML (originally `runwayml/stable-diffusion-v1-5`, now mirrored at `stable-diffusion-v1-5/stable-diffusion-v1-5`), building on the latent diffusion work of CompVis and Stability AI [1] | CreativeML Open RAIL-M |
-| CLIP text encoder (used once, to initialise the class embeddings) | Part of Stable Diffusion v1.5 [2] | as above |
+| CLIP text encoder (used once, to initialize the class embeddings) | Part of Stable Diffusion v1.5 [2] | as above |
 | ResNet-18 ImageNet weights (starting point of the classifiers) | torchvision `ResNet18_Weights.IMAGENET1K_V1` [3] | torchvision (BSD-3-Clause) |
 | Inception-v3 FID weights | torch-fidelity `weights-inception-2015-12-05` [4, 5] | Apache-2.0 |
 | Galaxy10 DECaLS | Leung & Bovy [6], images from the DESI Legacy Imaging Surveys [7], labels from Galaxy Zoo DECaLS [8] | see the dataset source |
 
-**Software** (versions pinned in `requirements.txt`; licences as declared in the installed package metadata):
+**Software** (versions pinned in `requirements.txt`; licenses as declared in the installed package metadata):
 PyTorch 2.14 and torchvision 0.29 [9], diffusers 0.40 (Apache-2.0), transformers 5.17 (Apache-2.0) [10],
 peft 0.21 (Apache-2.0), accelerate 1.15 (Apache-2.0), safetensors 0.8 (Apache-2.0), torchmetrics 1.9
 (Apache-2.0), torch-fidelity 0.4 (Apache-2.0), astroNN 1.1 (MIT) [11], scikit-learn 1.9 (BSD-3-Clause) [12],
 NumPy, SciPy, h5py (BSD-3-Clause), Matplotlib, Pillow.
 
-**Methods used:** LoRA [13], classifier-free guidance [14], DPM-Solver++ [15], FID [4], KID [16], colour-vision
+**Methods used:** LoRA [13], classifier-free guidance [14], DPM-Solver++ [15], FID [4], KID [16], color-vision
 deficiency simulation [17].
 
 1. R. Rombach, A. Blattmann, D. Lorenz, P. Esser, B. Ommer, "High-Resolution Image Synthesis with Latent Diffusion Models," CVPR 2022.

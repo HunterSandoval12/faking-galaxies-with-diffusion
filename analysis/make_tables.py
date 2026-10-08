@@ -109,8 +109,8 @@ def t02_hyperparameters():
     rows = [
         ["Diffusion", "Base model", c["pretrained_model"] + " (Stable Diffusion 1.5)"],
         ["Diffusion", "Fine-tuning", f"LoRA rank {c['lora_rank']}, alpha {c['lora_alpha']:g} on to_q/to_k/to_v/to_out.0"],
-        ["Diffusion", "Conditioning", "learned 11 x 77 x 768 class table (10 classes + null), CLIP-initialised"],
-        ["Diffusion", "Optimiser", f"AdamW, LR {c['learning_rate']:g}, weight decay {c['adam_weight_decay']:g}, "
+        ["Diffusion", "Conditioning", "learned 11 x 77 x 768 class table (10 classes + null), CLIP-initialized"],
+        ["Diffusion", "Optimizer", f"AdamW, LR {c['learning_rate']:g}, weight decay {c['adam_weight_decay']:g}, "
                                    f"{c['lr_scheduler']} ({c['lr_warmup_steps']} warmup)"],
         ["Diffusion", "Training", f"{c['max_train_steps']:,} steps (= {lora_epochs:.1f} epochs of the 12,330 training "
                                   f"images), batch {c['train_batch_size']}, {c['resolution']}px, {c['mixed_precision']}, "
@@ -119,7 +119,7 @@ def t02_hyperparameters():
                                     f"on {g['lora_adapted_layers']} attention projections (trained) + class table "
                                     f"{g['class_table_parameters_trainable']:,} (trained); VAE {g['vae_parameters_frozen']:,} "
                                     f"(frozen); CLIP text encoder {g['clip_text_encoder_parameters']:,} (used once, to "
-                                    "initialise the class table)"],
+                                    "initialize the class table)"],
         ["Diffusion", "Training time", f"{lora_min:.0f} min for {c['max_train_steps']:,} steps "
                                        f"({60 * lora_min / c['max_train_steps']:.2f} s/step)"],
         ["Diffusion", "Selected checkpoint", "10,000 steps (chosen on validation KID + class fidelity)"],
@@ -130,7 +130,7 @@ def t02_hyperparameters():
         ["Classifier", "Model", "ResNet-18, ImageNet-pretrained, 256 px input"],
         ["Classifier", "Parameters", f"{ms['resnet18']['parameters']:,} (all trained; ImageNet ResNet-18 with a new "
                                      "10-class output layer)"],
-        ["Classifier", "Optimiser", f"AdamW, LR {k['learning_rate']:g} (tuned on validation from 1e-4 / 3e-4 / 1e-3), "
+        ["Classifier", "Optimizer", f"AdamW, LR {k['learning_rate']:g} (tuned on validation from 1e-4 / 3e-4 / 1e-3), "
                                     f"weight decay {k['weight_decay']:g}, 1 warmup epoch + cosine"],
         ["Classifier", "Training", f"{k['epochs']} epochs, batch {k['batch_size']}, bf16, flips + 90-deg rotations, "
                                    "best epoch by validation accuracy"],
@@ -173,7 +173,7 @@ def t13_inference_speed():
           f"(+ {gen['resize_512_to_256_ms']['mean_ms']:.1f} ms CPU resize to 256 px, not included); one image = "
           f"{g['steps']} guided U-Net steps + one VAE decode; one U-Net evaluation = "
           f"{g['unet_flops_per_evaluation'] / 1e9:,.1f} GFLOPs. Classifier: ResNet-18 at 256 px, bf16; end-to-end = "
-          "image upload + normalisation + forward + softmax download. Warm-up excluded; GPU synchronised around every "
+          "image upload + normalization + forward + softmax download. Warm-up excluded; GPU synchronized around every "
           "timed call. FLOPs: PyTorch FlopCounterMode, 2 FLOPs per multiply-accumulate, matrix multiplications, "
           "convolutions and attention (analysis/model_stats.py); '-' = not timed separately.")
 

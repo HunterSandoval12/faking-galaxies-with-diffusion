@@ -3,7 +3,7 @@
 Usage: python analysis/model_stats.py   (runs on the CPU; no data is read)
 
 FLOPs are counted with PyTorch's FlopCounterMode (torch.utils.flop_counter): matrix multiplications,
-convolutions and attention, 2 FLOPs per multiply-accumulate; element-wise operations (normalisation,
+convolutions and attention, 2 FLOPs per multiply-accumulate; element-wise operations (normalization,
 activations, additions) are not counted, as is usual. Attention is counted through diffusers' classic
 matrix-multiply attention processor (the same computation): the counter does not see PyTorch's fused
 scaled-dot-product-attention kernel and would silently drop attention (~16% of the U-Net's FLOPs).

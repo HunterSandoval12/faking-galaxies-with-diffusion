@@ -227,8 +227,8 @@ def fig07_fidelity():
     dot(ax, [rec[c] for c in order], ys, S1, "o", label="Real validation images (classifier recall)")
     dot(ax, [fid[c] for c in order], ys, S2, "s", label="Synthetic images (class fidelity)")
     ax.set_yticks(ys, [SHORT[c] for c in order], fontsize=7); ax.grid(axis="x"); ax.grid(axis="y", visible=False)
-    ax.set_xlim(0, 1.02); ax.set_xlabel("Fraction recognised as the intended class")
-    ax.set_title("Does a real-trained classifier recognise the class?", loc="left")
+    ax.set_xlim(0, 1.02); ax.set_xlabel("Fraction recognized as the intended class")
+    ax.set_title("Does a real-trained classifier recognize the class?", loc="left")
     ax.legend(loc="upper left", fontsize=6.6)
     for c in (CIGAR,):
         yy = order.index(c)
@@ -402,7 +402,7 @@ def fig13_confusion():
     axes[0].set_yticks(range(10), [f"{c}  {SHORT[c]}" for c in range(10)], fontsize=6.8); axes[0].set_ylabel("True class")
     axes[1].set_yticks([])
     cb = fig.colorbar(im, ax=axes, fraction=0.025, pad=0.02); cb.outline.set_visible(False); cb.ax.tick_params(labelsize=6.5)
-    cb.set_label("Fraction of true class (row-normalised)", fontsize=7, color=INK2)
+    cb.set_label("Fraction of true class (row-normalized)", fontsize=7, color=INK2)
     save(fig, "fig13_confusion_matrices", rows, ["condition", "true", "predicted", "fraction"])
 
 

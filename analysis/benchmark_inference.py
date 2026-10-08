@@ -8,7 +8,7 @@ Usage: python analysis/benchmark_inference.py
    the synthetic set), reported per image.
 2. ResNet-18 classifier (runs_cls/exp/A_replace0_seed0/best.pt), batch size 1, bf16 autocast +
    channels_last as in evaluation: (a) GPU forward pass only, (b) end-to-end (uint8 image
-   host->GPU, normalisation, forward, softmax back to the host).
+   host->GPU, normalization, forward, softmax back to the host).
 Timing: warm-up first, torch.cuda.synchronize() around every timed call, wall clock
 (time.perf_counter). Classifier inputs are VALIDATION images (no test data is read).
 Writes results/inference_speed.json and table results/tables/t13_inference_speed.*

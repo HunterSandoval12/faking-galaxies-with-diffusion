@@ -4,10 +4,10 @@
 |---|---|---|
 | Diffusion | Base model | runwayml/stable-diffusion-v1-5 (Stable Diffusion 1.5) |
 | Diffusion | Fine-tuning | LoRA rank 8, alpha 8 on to_q/to_k/to_v/to_out.0 |
-| Diffusion | Conditioning | learned 11 x 77 x 768 class table (10 classes + null), CLIP-initialised |
-| Diffusion | Optimiser | AdamW, LR 0.0001, weight decay 0.01, constant_with_warmup (500 warmup) |
+| Diffusion | Conditioning | learned 11 x 77 x 768 class table (10 classes + null), CLIP-initialized |
+| Diffusion | Optimizer | AdamW, LR 0.0001, weight decay 0.01, constant_with_warmup (500 warmup) |
 | Diffusion | Training | 10,000 steps (= 6.5 epochs of the 12,330 training images), batch 8, 512px, bf16, cond. dropout 0.1, flips + 90-deg rotations, seed 42 |
-| Diffusion | Parameters | U-Net 859,520,964 (frozen) + LoRA 1,594,368 on 128 attention projections (trained) + class table 650,496 (trained); VAE 83,653,863 (frozen); CLIP text encoder 123,060,480 (used once, to initialise the class table) |
+| Diffusion | Parameters | U-Net 859,520,964 (frozen) + LoRA 1,594,368 on 128 attention projections (trained) + class table 650,496 (trained); VAE 83,653,863 (frozen); CLIP text encoder 123,060,480 (used once, to initialize the class table) |
 | Diffusion | Training time | 60 min for 10,000 steps (0.36 s/step) |
 | Diffusion | Selected checkpoint | 10,000 steps (chosen on validation KID + class fidelity) |
 | Sampling | Sampler | DPM-Solver++ (2nd order), 30 steps, classifier-free guidance 3.0 |
@@ -15,7 +15,7 @@
 | Sampling | Generation time | 99.5 min for the 12,330-image synthetic set (0.48 s/image, batches of 20) |
 | Classifier | Model | ResNet-18, ImageNet-pretrained, 256 px input |
 | Classifier | Parameters | 11,181,642 (all trained; ImageNet ResNet-18 with a new 10-class output layer) |
-| Classifier | Optimiser | AdamW, LR 0.001 (tuned on validation from 1e-4 / 3e-4 / 1e-3), weight decay 0.05, 1 warmup epoch + cosine |
+| Classifier | Optimizer | AdamW, LR 0.001 (tuned on validation from 1e-4 / 3e-4 / 1e-3), weight decay 0.05, 1 warmup epoch + cosine |
 | Classifier | Training | 30 epochs, batch 128, bf16, flips + 90-deg rotations, best epoch by validation accuracy |
 | Classifier | Seeds | 3 per condition (8 for real-only, Cigar-Shaped and scarcity-control conditions) |
 | Classifier | Training time | Real only 1.5 min; 50% synthetic 1.5 min; Synthetic only 1.5 min per run (30 epochs incl. per-epoch validation; mean over seeds) |
